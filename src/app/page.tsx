@@ -3,14 +3,9 @@
 import Image from "next/image";
 
 export default function Home() {
-
-  const handleJoinTableClicked = () => {
-
-  }
-  const handleCreateNewTableClicked = () => {
+  const handleSignIn = async () => {
     
   }
-
   return (
     <main className="px-5 h-screen flex flex-col justify-center items-center gap-5">
         <header className="px-10 flex flex-col">
@@ -34,7 +29,7 @@ export default function Home() {
         </section>
       
       <div className="mt-4">
-        <button type="button" onClick={handleJoinTableClicked} className="py-4 px-14 bg-white text-black rounded-3xl transform transition-all duration-100 hover:bg-white hover:scale-105">
+        <button type="button" onClick={handleSignIn} className="py-4 px-14 bg-white text-black rounded-3xl transform transition-all duration-100 hover:bg-white hover:scale-105">
           <div className="flex justify-center gap-4">
             <Image src="/google.svg" alt="googleIcon" width={24} height={24}/>
             Continue with Google
