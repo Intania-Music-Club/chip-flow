@@ -6,7 +6,7 @@ import { signIn, signOut, useSession, getProviders, ClientSafeProvider  } from "
 
 type ProvidersType = Record<string, ClientSafeProvider> | null;
 
-export default function Home() {
+export default function LandingPage() {
   const { data:session } = useSession();
 
   const [ providers, setProviders ] = useState<ProvidersType>(null);
@@ -18,14 +18,9 @@ export default function Home() {
     setUpProviders();
   }, []);
 
-  const handleSignOut = () => {
-    // Redirect to the home page
-    signOut({ callbackUrl: '/' });
-  };
-
   const handleSignIn = async (providerId: string) => {
     await signIn(providerId, {
-      callbackUrl: "/",
+      callbackUrl: "/home",
     });
   }
   return (
@@ -59,13 +54,6 @@ export default function Home() {
           </button>
       </div>
       ))}
-
-      {
-        (session?.user) ? 
-        (<h1 onClick={handleSignOut}>Sign Out {session.user.name}</h1>
-        ) : 
-        <></>
-      }
     </main>
   )      
 }
