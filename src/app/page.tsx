@@ -1,10 +1,32 @@
 "use client"
 
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { signIn, signOut, useSession, getProviders, ClientSafeProvider  } from "next-auth/react";
+
+type ProvidersType = Record<string, ClientSafeProvider> | null;
 
 export default function Home() {
-  const handleSignIn = async () => {
-    
+  const { data:session } = useSession();
+
+  const [ providers, setProviders ] = useState<ProvidersType>(null);
+  useEffect(() => {
+    const setUpProviders = async () => {
+      const response = await getProviders();
+      setProviders(response);
+    }
+    setUpProviders();
+  }, []);
+
+  const handleSignOut = () => {
+    // Redirect to the home page
+    signOut({ callbackUrl: '/' });
+  };
+
+  const handleSignIn = async (providerId: string) => {
+    await signIn(providerId, {
+      callbackUrl: "/",
+    });
   }
   return (
     <main className="px-5 h-screen flex flex-col justify-center items-center gap-5">
@@ -27,15 +49,23 @@ export default function Home() {
                 <h1>TRACKING</h1>
               </div>
         </section>
-      
-      <div className="mt-4">
-        <button type="button" onClick={handleSignIn} className="py-4 px-14 bg-white text-black rounded-3xl transform transition-all duration-100 hover:bg-white hover:scale-105">
-          <div className="flex justify-center gap-4">
-            <Image src="/google.svg" alt="googleIcon" width={24} height={24}/>
-            Continue with Google
-          </div>
-        </button>
+      {providers && Object.values(providers).map((provider) => (
+        <div key={provider.name} className="mt-4">
+          <button type="button" onClick={() => handleSignIn(provider.id)} className="py-4 px-14 bg-white text-black rounded-3xl transform transition-all duration-100 hover:bg-white hover:scale-105">
+            <div className="flex justify-center gap-4">
+              <Image src="/google.svg" alt="googleIcon" width={24} height={24}/>
+              Continue with Google
+            </div>
+          </button>
       </div>
+      ))}
+
+      {
+        (session?.user) ? 
+        (<h1 onClick={handleSignOut}>Sign Out {session.user.name}</h1>
+        ) : 
+        <></>
+      }
     </main>
   )      
 }
