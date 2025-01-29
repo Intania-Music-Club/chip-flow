@@ -24,6 +24,14 @@
 
 @font-face {
   font-family: "Gotham";
+  src: url("/fonts/Gotham/Gotham-Light.otf") format("opentype");
+
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
   src: url("/fonts/Gotham/Gotham-Medium.otf") format("opentype");
 
   font-weight: 500;

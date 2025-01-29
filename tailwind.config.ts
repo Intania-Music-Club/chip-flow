@@ -18,7 +18,7 @@ export default {
         gotham: ['"Gotham"', 'sans-serif'],
       },
       backgroundImage: {
-        'radial-gradient': 'radial-gradient(circle at 50% 110%, #872341 , #09122C 80%)',
+        'radial-gradient': 'radial-gradient(circle at 50% 120%, #872341 1%, #09122C 90%)',
       }
     },
   },
