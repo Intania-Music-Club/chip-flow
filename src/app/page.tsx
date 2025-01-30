@@ -19,6 +19,7 @@ export default function LandingPage() {
   const [providers, setProviders] = useState<ProvidersType>(null);
   const [isVisibleProvider, setIsVisibleProvider] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [siginInText, setSignInText] = useState("Continue with Google");
   useEffect(() => {
     const setUpProviders = async () => {
       const response = await getProviders();
@@ -41,6 +42,7 @@ export default function LandingPage() {
   }, [providers]);
 
   const handleSignIn = async (providerId: string) => {
+    setSignInText("Signing In ...");
     await signIn(providerId, {
       callbackUrl: "/home",
     });
@@ -125,7 +127,7 @@ export default function LandingPage() {
         </div>
       </section>
       {providers &&
-        isPWA &&
+      //  isPWA &&
         Object.values(providers).map((provider) => (
           <div
             key={provider.name}
@@ -147,7 +149,7 @@ export default function LandingPage() {
                   width={24}
                   height={24}
                 />
-                Continue with Google
+                {siginInText}
               </div>
             </button>
           </div>
