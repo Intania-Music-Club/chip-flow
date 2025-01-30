@@ -22,18 +22,31 @@ const userSchema = new Schema({
     },
 
     roomJoining: {
-        roomId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Room',
+        type: {
+            roomId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Room',
+            },
+            roomPIN: {
+                type: String,
+            },
+            isModerator: {
+                type: Boolean,
+                default: false,
+            },
         },
-        roomPIN: {
-            type: String,
-        },
-        isModerator: {
-            type: Boolean,
-            default: false,
-        },
+        default: null,
     },
+
+    roomJoined: {
+        type: {
+            roomId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Room',
+            },
+        },
+        default: null,
+    }
 
 });
 

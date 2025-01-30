@@ -30,6 +30,7 @@ const handler = NextAuth({
                     token.image = sessionUser.image;
                     token.bankroll = sessionUser.bankroll;
                     token.roomJoining = sessionUser.roomJoining;
+                    token.roomJoined = sessionUser.roomJoined;
                 }
             }
             return token;
@@ -41,6 +42,7 @@ const handler = NextAuth({
             session.user.image = token.image;
             session.user.bankroll = token.bankroll;
             session.user.roomJoining = token.roomJoining;
+            session.user.roomJoined = token.roomJoined;
 
             return session;
         },
