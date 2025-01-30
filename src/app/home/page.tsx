@@ -8,7 +8,9 @@ import { useState } from "react";
 
 const HomePage = () => {
   const { data: session } = useSession();
+  const [logOutText, setLogOutText] = useState("Log Out");
   const handleSignOut = () => {
+    setLogOutText("Log Out ...");
     signOut({ callbackUrl: "/" });
   };
 
@@ -33,7 +35,7 @@ const HomePage = () => {
             onClick={handleSignOut}
             className="text-bold bg-[#C63C51] mt-3 w-24 rounded-md text-sm text-center py-1"
           >
-            Log Out
+            {logOutText}
           </button>
         </div>
 
@@ -43,7 +45,7 @@ const HomePage = () => {
             alt="user profile"
             width={70}
             height={70}
-            className="mt-3"
+            className="mt-3 rounded-full"
           />
         </div>
       </div>

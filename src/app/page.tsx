@@ -142,7 +142,7 @@ export default function LandingPage() {
               onClick={() => handleSignIn(provider.id)}
               className="py-3 px-14 bg-white text-black rounded-lg transform transition-all duration-100 hover:bg-white hover:scale-105"
             >
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-4 w-full">
                 <Image
                   src="/google.svg"
                   alt="googleIcon"
