@@ -8,10 +8,12 @@ import {
 } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import useIsPWA from "../components/useIsPWA";
 
 type ProvidersType = Record<string, ClientSafeProvider> | null;
 
 export default function LandingPage() {
+  const isPWA = useIsPWA();
   const { data: session } = useSession();
 
   const [providers, setProviders] = useState<ProvidersType>(null);
@@ -44,8 +46,8 @@ export default function LandingPage() {
     });
   };
   return (
-    <main className="px-5 h-screen flex flex-col justify-center items-center gap-3">
-      <header className="px-10 flex flex-col">
+    <main className="px-5 h-screen flex flex-col items-center gap-3">
+      <header className="mt-14 px-10 flex flex-col">
         <h1
           className={`text-center text-5xl font-bold transition-all duration-1000 ease-out transform ${
             isVisible
@@ -72,7 +74,12 @@ export default function LandingPage() {
           }`}
         >
           <button className="border px-3 py-2 text-sm rounded-lg">
-            Buy me a coffee
+            {isPWA ? (
+              <p>Running in PWA Mode 🎉</p>
+            ) : (
+              <p>Running in Browser 🌍</p>
+            )}
+            {/* Buy me a coffee */}
           </button>
         </div>
       </header>
@@ -118,10 +125,11 @@ export default function LandingPage() {
         </div>
       </section>
       {providers &&
+        isPWA &&
         Object.values(providers).map((provider) => (
           <div
             key={provider.name}
-            className={`fixed bottom-0 transition-all duration-1000 ease-out ${
+            className={`fixed bottom-0 mb-20 transition-all duration-1000 ease-out ${
               isVisibleProvider
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
