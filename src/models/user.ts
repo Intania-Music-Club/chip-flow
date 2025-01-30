@@ -38,16 +38,17 @@ const userSchema = new Schema({
         default: null,
     },
 
-    roomJoined: {
-        type: {
-            roomId: {
-                type: Schema.Types.ObjectId,
-                ref: 'Room',
+    roomJoined: [
+        {
+            type: {
+                roomId: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Room',
+                },
             },
-        },
-        default: null,
-    }
-
+            default: null,
+        }
+    ],
 });
 
 const User = models.User || model("User", userSchema);
