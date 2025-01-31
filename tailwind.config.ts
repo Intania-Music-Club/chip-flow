@@ -19,7 +19,10 @@ export default {
       },
       backgroundImage: {
         'radial-gradient': 'radial-gradient(circle at 50% 120%, #872341 1%, #09122C 90%)',
-      }
+      },
+      borderWidth: {
+        '1': '1px', // Adding border-b-1
+      },
     },
   },
   plugins: [],
