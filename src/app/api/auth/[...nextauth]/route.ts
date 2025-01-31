@@ -3,15 +3,24 @@ import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@/utils/database";
 import User from "@/models/user";
 import { JWT } from "next-auth/jwt";
+import { Types } from "mongoose";
 
 // Define the custom types for the session
+interface RoomJoined {
+  roomId: Types.ObjectId;
+}
+
 interface CustomUser extends NextAuthUser {
   id: string;
   username: string;
   image?: string;
   bankroll: number;
-  roomJoining: any;
-  roomJoined: any;
+  roomJoining: {
+    roomId: Types.ObjectId;
+    roomPIN: string;
+    isModerator: boolean;
+  } | null;
+  roomJoined: RoomJoined[];
 }
 
 interface CustomSession extends Session {
