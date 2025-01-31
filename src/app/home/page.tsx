@@ -3,16 +3,23 @@
 import CreateModal from "@/components/CreateModal";
 import JoinModal from "@/components/JoinModal";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
 
 const HomePage = () => {
   const { data: session } = useSession();
+
   const [logOutText, setLogOutText] = useState("Log Out");
   const handleSignOut = () => {
     setLogOutText("Log Out ...");
     signOut({ callbackUrl: "/" });
   };
+
+  const router = useRouter();
+  const handleProfileImageClicked = () => {
+    router.push("/profile");
+  }
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const openJoinModal = () => setIsJoinModalOpen(true);
@@ -39,7 +46,7 @@ const HomePage = () => {
           </button>
         </div>
 
-        <div className="flex justify-end items-start">
+        <div className="flex justify-end items-start" onClick={handleProfileImageClicked}>
           <Image
             src={userImg}
             alt="user profile"
