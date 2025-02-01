@@ -6,7 +6,6 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { clearTimeout } from "timers";
 
 const HomePage = () => {
   const { data: session } = useSession();
@@ -30,8 +29,10 @@ const HomePage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
         setIsButtonVisible(true);
-    }, 300)
-    return () => clearTimeout(timer);
+    }, 100)
+    return () => {
+        if(timer) clearTimeout(timer)
+    }
   }, [])
 
   useEffect(() => {
@@ -39,7 +40,9 @@ const HomePage = () => {
         const timer = setTimeout(() => {
             setIsNameVisible(true);
         }, 300)
-        return () => clearTimeout(timer);
+        return () => {
+            if(timer) clearTimeout(timer)
+        }
     }
   }, [isButtonVisible])
 
@@ -48,7 +51,9 @@ const HomePage = () => {
         const timer = setTimeout(() => {
             setIsImageVisible(true);
         }, 200)
-        return () => clearTimeout(timer);
+        return () => {
+            if(timer) clearTimeout(timer)
+        }
     }
   }, [isNameVisible])
 
@@ -57,7 +62,9 @@ const HomePage = () => {
         const timer = setTimeout(() => {
             setIsLogOutVisible(true);
         }, 300)
-        return () => clearTimeout(timer);
+        return () => {
+            if(timer) clearTimeout(timer)
+        }
     }
   }, [isImageVisible])
 
