@@ -3,8 +3,8 @@
 import CreateModal from "@/components/CreateModal";
 import JoinModal from "@/components/JoinModal";
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const HomePage = () => {
@@ -15,11 +15,6 @@ const HomePage = () => {
     setLogOutText("Log Out ...");
     signOut({ callbackUrl: "/" });
   };
-
-  const router = useRouter();
-  const handleProfileImageClicked = () => {
-    router.push("/profile");
-  }
 
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [isNameVisible, setIsNameVisible] = useState(false);
@@ -99,15 +94,16 @@ const HomePage = () => {
             </button>
         </div>
 
-        <div className={`flex justify-end items-start transition-all duration-500 ${isImageVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
-            onClick={handleProfileImageClicked}>
-          <Image
-            src={userImg}
-            alt="user profile"
-            width={70}
-            height={70}
-            className="mt-3 rounded-full transition-all duration-150 hover:scale-110"
-          />
+        <div className={`flex justify-end items-start transition-all duration-500 ${isImageVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}>
+          <Link href="/profile">
+            <Image
+                src={userImg}
+                alt="user profile"
+                width={70}
+                height={70}
+                className="mt-3 rounded-full transition-all duration-150 hover:scale-110"
+            />
+          </Link>
         </div>
       </div>
 

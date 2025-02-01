@@ -23,7 +23,7 @@ interface CustomUser extends NextAuthUser {
   roomJoined: RoomJoined[];
 }
 
-interface CustomSession extends Session {
+export interface CustomSession extends Session {
   user: CustomUser;
 }
 
@@ -49,7 +49,7 @@ const handler = NextAuth({
         if (sessionUser) {
           token.id = sessionUser._id.toString();
           token.email = sessionUser.email;
-          token.username = sessionUser.username;
+          token.name = sessionUser.username;
           token.image = sessionUser.image;
           token.bankroll = sessionUser.bankroll;
           token.roomJoining = sessionUser.roomJoining;
@@ -59,9 +59,9 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }: { session: CustomSession, token: JWT }) {
-      session.user.id = token.id as string;
-      session.user.email = token.email as string;
-      session.user.username = token.username as string;
+      session.user.id = token.id;
+      session.user.email = token.email;
+      session.user.name = token.name;
       session.user.image = token.image;
       session.user.bankroll = token.bankroll;
       session.user.roomJoining = token.roomJoining;
@@ -69,6 +69,7 @@ const handler = NextAuth({
 
       return session;
     },
+
     async signIn({ profile }: { profile: any }) {
       try {
         await connectToDB();

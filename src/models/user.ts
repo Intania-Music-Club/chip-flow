@@ -26,9 +26,11 @@ const userSchema = new Schema({
             roomId: {
                 type: Schema.Types.ObjectId,
                 ref: 'Room',
+                required: true,
             },
             roomPIN: {
                 type: String,
+                required: true,
             },
             isModerator: {
                 type: Boolean,
@@ -43,6 +45,7 @@ const userSchema = new Schema({
             roomId: {
                 type: Schema.Types.ObjectId,
                 ref: 'Room',
+                required: true,
             },
         }],
         default: [],

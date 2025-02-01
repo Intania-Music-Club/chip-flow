@@ -11,11 +11,11 @@ const ProfilePage = () => {
     const [image, setImage] = useState<string>("/");
     const [roomJoined, setRoomJoined] = useState<RoomReference[]>([]);
     const [bankroll, setBankRoll] = useState<number>(0);
-
+    const {data:session, status} = useSession();
     useEffect(() => {
         const fetchSession = async () => {
-            const session = await getSession();
             if (session?.user) {
+                console.log(session?.user);
                 setLoading(false);
                 setUsername(session.user.name ?? "");
                 setImage(session.user.image ?? "");
@@ -23,10 +23,10 @@ const ProfilePage = () => {
                 setBankRoll(session.user.bankroll ?? 0);
             }
         };
-        
+        console.log(status)
         fetchSession();
         
-    }, []);
+    }, [session]);
 
 
     return (
