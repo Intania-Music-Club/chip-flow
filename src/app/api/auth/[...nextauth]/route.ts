@@ -12,7 +12,7 @@ interface RoomJoined {
 
 interface CustomUser extends NextAuthUser {
   id: string;
-  username: string;
+  name: string;
   image?: string;
   bankroll: number;
   roomJoining: {
@@ -23,11 +23,11 @@ interface CustomUser extends NextAuthUser {
   roomJoined: RoomJoined[];
 }
 
-interface CustomSession extends Session {
+export interface CustomSession extends Session {
   user: CustomUser;
 }
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID as string,
@@ -35,40 +35,25 @@ const handler = NextAuth({
     }),
   ],
 
-  session: {
-    strategy: "jwt",
-  },
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
-    maxAge: 7 * 24 * 60 * 60, // 7 days
-  },
   callbacks: {
-    async jwt({ token, user }: { token: JWT, user?: NextAuthUser }) {
-      if (user) {
-        const sessionUser = await User.findOne({ email: user.email });
-        if (sessionUser) {
-          token.id = sessionUser._id.toString();
-          token.email = sessionUser.email;
-          token.username = sessionUser.username;
-          token.image = sessionUser.image;
-          token.bankroll = sessionUser.bankroll;
-          token.roomJoining = sessionUser.roomJoining;
-          token.roomJoined = sessionUser.roomJoined;
-        }
-      }
-      return token;
-    },
-    async session({ session, token }: { session: CustomSession, token: JWT }) {
-      session.user.id = token.id as string;
-      session.user.email = token.email as string;
-      session.user.username = token.username as string;
-      session.user.image = token.image;
-      session.user.bankroll = token.bankroll;
-      session.user.roomJoining = token.roomJoining;
-      session.user.roomJoined = token.roomJoined;
+    async session({ session, user }: { session: CustomSession, user: CustomUser}) {
+      await connectToDB();
+      const userDB = await User.findOne({email: session.user.email})
+      if(!userDB) return session;
+      
+      session.user.id = userDB._id.toString();
+      session.user.email = userDB.email;
+      session.user.name = userDB.username;
+      session.user.image = userDB.image;
+      session.user.bankroll = userDB.bankroll;
+      session.user.roomJoining = userDB.roomJoining;
+      session.user.roomJoined = userDB.roomJoined;
+
+      // console.log("real session : ", session);
 
       return session;
     },
+
     async signIn({ profile }: { profile: any }) {
       try {
         await connectToDB();
@@ -84,6 +69,7 @@ const handler = NextAuth({
             image: profile.picture,
             bankroll: 0,
             roomJoining: null,
+            roomJoined: [],
           });
         }
         return true;
@@ -93,6 +79,8 @@ const handler = NextAuth({
       }
     },
   },
-} as NextAuthOptions);
+} as NextAuthOptions;
 
-export { handler as GET, handler as POST, handler as authOptions };
+const handler = NextAuth(authOptions);
+
+export {handler as GET, handler as POST };

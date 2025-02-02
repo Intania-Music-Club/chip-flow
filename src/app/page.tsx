@@ -14,7 +14,6 @@ type ProvidersType = Record<string, ClientSafeProvider> | null;
 
 export default function LandingPage() {
   const isPWA = useIsPWA();
-  const { data: session } = useSession();
 
   const [providers, setProviders] = useState<ProvidersType>(null);
   const [isVisibleProvider, setIsVisibleProvider] = useState(false);
