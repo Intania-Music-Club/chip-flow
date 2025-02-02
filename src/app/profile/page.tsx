@@ -1,42 +1,21 @@
 "use client"
 
 import Profile from '@/components/Profile'
-import { RoomReference } from 'next-auth'
-import { useSession, getSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 
 const ProfilePage = () => {
-    const [loading, setLoading] = useState(true);
-    const [username, setUsername] = useState<string>("/");
-    const [image, setImage] = useState<string>("/");
-    const [roomJoined, setRoomJoined] = useState<RoomReference[]>([]);
-    const [bankroll, setBankRoll] = useState<number>(0);
-    const {data:session, status} = useSession();
-    useEffect(() => {
-        const fetchSession = async () => {
-            if (session?.user) {
-                console.log(session?.user);
-                setLoading(false);
-                setUsername(session.user.name ?? "");
-                setImage(session.user.image ?? "");
-                setRoomJoined(session.user.roomJoined ?? []);
-                setBankRoll(session.user.bankroll ?? 0);
-            }
-        };
-        console.log(status)
-        fetchSession();
-        
-    }, [session]);
 
+    const {data:session, status} = useSession();
 
     return (
-        loading ? 
-        <div className="h-screen flex justify-center items-center text-3xl font-bold">Loading ...</div> :
+        status === "authenticated" &&
         <Profile 
-            name={username}
-            image={image}
-            roomJoined={roomJoined}
-            bankroll={bankroll}
+            userId={session?.user.id ?? ""}
+            name={session?.user.name ?? ""}
+            image={session?.user.image ?? ""}
+            roomJoined={session?.user.roomJoined ?? []}
+            bankroll={session?.user.bankroll ?? 0}
             isOwnProfile={true}
         />
     )

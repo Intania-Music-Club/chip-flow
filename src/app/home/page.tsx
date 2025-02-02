@@ -8,7 +8,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const HomePage = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  console.log(session);
 
   const [logOutText, setLogOutText] = useState("Log Out");
   const handleSignOut = () => {
@@ -22,13 +23,15 @@ const HomePage = () => {
   const [isImageVisible, setIsImageVisible] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-        setIsButtonVisible(true);
-    }, 100)
-    return () => {
-        if(timer) clearTimeout(timer)
+    if(status === "authenticated") {
+        const timer = setTimeout(() => {
+            setIsButtonVisible(true);
+        }, 100)
+        return () => {
+            if(timer) clearTimeout(timer)
+        }
     }
-  }, [])
+  }, [status])
 
   useEffect(() => {
     if(isButtonVisible) {
@@ -81,7 +84,7 @@ const HomePage = () => {
                 Hi,
             </div>
             <div className={`font-bold text-3xl transtion-all duration-500 ${isNameVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"}`}>
-                {session?.user?.name}
+                {session?.user.name}
             </div>
             <button
                 type="button"

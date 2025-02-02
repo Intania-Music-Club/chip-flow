@@ -28,10 +28,8 @@ export default async function RootLayout({
   const session = (await getServerSession(authOptions)) as Session | null;
   return (
     <html lang="en">
-      <Provider session={session}>
-        <body
-          className={`bg-radial-gradient min-h-screen ${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+      <Provider session={session} key={session?.user.id}>
+        <body className={`bg-radial-gradient min-h-screen ${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}
         </body>
       </Provider>

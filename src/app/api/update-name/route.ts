@@ -8,7 +8,7 @@ export const POST = async (req: Request) => {
 
         await connectToDB();
         const user = await User.findById(userId);
-        console.log(user);
+        // console.log(user);
         if(!user) {
             return new NextResponse("User not found", { status: 404 })
         }
