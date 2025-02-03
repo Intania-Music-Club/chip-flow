@@ -26,9 +26,11 @@ const userSchema = new Schema({
             roomId: {
                 type: Schema.Types.ObjectId,
                 ref: 'Room',
+                required: true,
             },
             roomPIN: {
                 type: String,
+                required: true,
             },
             isModerator: {
                 type: Boolean,
@@ -39,15 +41,15 @@ const userSchema = new Schema({
     },
 
     roomJoined: {
-        type: {
+        type: [{
             roomId: {
                 type: Schema.Types.ObjectId,
                 ref: 'Room',
+                required: true,
             },
-        },
-        default: null,
-    }
-
+        }],
+        default: [],
+    },
 });
 
 const User = models.User || model("User", userSchema);

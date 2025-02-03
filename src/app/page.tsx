@@ -14,7 +14,6 @@ type ProvidersType = Record<string, ClientSafeProvider> | null;
 
 export default function LandingPage() {
   const isPWA = useIsPWA();
-  const { data: session } = useSession();
 
   const [providers, setProviders] = useState<ProvidersType>(null);
   const [isVisibleProvider, setIsVisibleProvider] = useState(false);
@@ -57,7 +56,7 @@ export default function LandingPage() {
               : "-translate-y-16 opacity-0"
           }`}
         >
-          CHIPFLOW
+          CHIPPY
         </h1>
         <h1
           className={`text-center mt-5 font-light transition-all duration-500 ease-out transform ${
@@ -67,7 +66,7 @@ export default function LandingPage() {
           }`}
         >
           The platform for poker players to manage{" "}
-          <span className="font-medium text-red-400">limited chips</span> with
+          <span className="font-medium text-[#D95F59]">limited chips</span> with
           easy buying, selling, and tracking!
         </h1>
         <div
@@ -127,22 +126,22 @@ export default function LandingPage() {
         </div>
       </section>
       {providers &&
-      //  isPWA &&
+        //  isPWA &&
         Object.values(providers).map((provider) => (
           <div
             key={provider.name}
-            className={`fixed bottom-0 mb-20 transition-all duration-1000 ease-out ${
+            className={`w-full px-10 fixed bottom-0 mb-20 transition-all duration-1000 ease-out ${
               isVisibleProvider
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
-            }`}
+            } flex justify-center items-center`}
           >
             <button
               type="button"
               onClick={() => handleSignIn(provider.id)}
-              className="py-3 px-14 bg-white text-black rounded-lg transform transition-all duration-100 hover:bg-white hover:scale-105"
+              className="py-3 bg-white w-full text-black rounded-lg transform transition-all duration-100 hover:bg-white hover:scale-105"
             >
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-4 w-full">
                 <Image
                   src="/google.svg"
                   alt="googleIcon"

@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const roomSchema = new Schema({
     PIN: {
@@ -28,8 +28,8 @@ const roomSchema = new Schema({
         type: Date,
     },
 
-    players: [
-        {
+    players: {
+        type: [{
             userId: {
                 type: Schema.Types.ObjectId,
                 ref: 'User',
@@ -42,32 +42,34 @@ const roomSchema = new Schema({
                 type: Number,
                 min: [0, 'Remaining chips cannot be negative'],
             }
-        }
-    ],
+        }],
+        default: []
+    },
 
-    transaction: [
-        {
-            transactionId: { 
-                type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() 
-            },
-            seller: {
-                type: String,
-                required: true,
-            },
-            buyer: {
-                type: String,
-                required: true,
-            },
-            amount: {
-                type: Number,
-                required: true,
-            },
-            timeStamp: {
-                type: Date,
-                default: Date.now,
-            }
-        }
-    ],
+    transaction: {
+        type: [{
+                transactionId: { 
+                    type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() 
+                },
+                seller: {
+                    type: String,
+                    required: true,
+                },
+                buyer: {
+                    type: String,
+                    required: true,
+                },
+                amount: {
+                    type: Number,
+                    required: true,
+                },
+                timeStamp: {
+                    type: Date,
+                    default: Date.now,
+                }
+        }],
+        default: [],
+    },
 })
 
 const Room = models.Room || model('Room', roomSchema);
