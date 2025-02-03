@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FC } from "react";
-import CloseIcon from "../../public/images/close-icon.svg";
+import CloseIcon from "../../../../public/images/close-icon.svg";
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose} // คลิกที่พื้นหลังปิด Modal
     >
       <div
-        className="bg-[#303030] fixed bottom-0 w-full h-3/4 rounded-t-[40px] px-5"
+        className="bg-[#303030] fixed bottom-0 w-full pb-10 rounded-t-[40px] px-5"
         onClick={(e) => e.stopPropagation()} // หยุดการปิดเมื่อคลิกใน Modal
       >
         <div className=" mt-7 h-10 flex items-center justify-between w-full">

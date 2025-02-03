@@ -1,7 +1,7 @@
 "use client"
 
-import CreateModal from "@/components/CreateModal";
-import JoinModal from "@/components/JoinModal";
+import CreateModal from "@/app/home/components/CreateModal";
+import JoinModal from "@/app/home/components/JoinModal";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
