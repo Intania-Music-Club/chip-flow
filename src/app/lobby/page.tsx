@@ -1,6 +1,8 @@
 "use client";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useState } from "react";
+import BuyInModal from "./components/BuyInModal";
 import PlayerStat from "./components/PlayerStat";
 import Transaction from "./components/Transaction";
 
@@ -8,6 +10,9 @@ const LobbyPage = () => {
   const { data: session } = useSession();
   const userImg = session?.user?.image ?? "/";
 
+  const [isBuyInModalOpen, setIsBuyInModalOpen] = useState(false);
+  const openBuyInModal = () => setIsBuyInModalOpen(true);
+  const closeBuyInModal = () => setIsBuyInModalOpen(false);
   return (
     <>
       <div className="mx-5 mt-14 flex flex-col gap-y-5 pb-32">
@@ -111,12 +116,18 @@ const LobbyPage = () => {
             DannyChu
           </div>
           <div className="flex justify-end items-center">
-            <button className="bg-black text-white py-2 px-4 rounded-md text-lg font-bold">
+            <button
+              onClick={openBuyInModal}
+              className="bg-black text-white py-2 px-4 rounded-md text-lg font-bold"
+            >
               Buy In
             </button>
           </div>
         </div>
       </footer>
+
+      {/* Modal */}
+      <BuyInModal isOpen={isBuyInModalOpen} onClose={closeBuyInModal} />
     </>
   );
 };
