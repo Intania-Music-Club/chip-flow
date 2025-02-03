@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { RoomReference } from "next-auth";
 import { Check, X } from 'lucide-react';
+import AnimatedNumber from "./AnimatedNumber";
   
 interface ProfileProps {
     userId: string,
@@ -62,6 +63,17 @@ const Profile: React.FC<ProfileProps> = ({ userId, name, image, roomJoined, bank
             if(timer) clearTimeout(timer)
         }
     }, [])
+
+    useEffect(() => {
+        if(isBoxVisible) {
+            const timer = setTimeout(() => {
+                setIsStatTextsVisible(true);
+            }, 100)
+            return () => {
+                if(timer) clearTimeout(timer)
+            }
+        }
+    }, [isBoxVisible])
 
     useEffect(() => {
         if(isBoxVisible) {
@@ -150,35 +162,55 @@ const Profile: React.FC<ProfileProps> = ({ userId, name, image, roomJoined, bank
                         </div>
                     </div>
                     
-                    <div className="mt-3 w-full flex justify-evenly gap-2">
-                        <div className="w-20 flex flex-col justify-center items-center">
-                            <div className="text-4xl font-bold">
-                                {totalMatch}
+                    {(
+                        <div className="mt-3 w-full flex justify-evenly gap-2">
+                            <div className="w-20 flex flex-col justify-center items-center">
+                                <div className="text-4xl font-bold">
+                                    <AnimatedNumber 
+                                        from={0}
+                                        to={totalMatch}
+                                        duration={3000} 
+                                    />
+                                </div>
+                                <div className={`mt-2 flex flex-col justify-center items-center leading-[1.1] font-light transition-all duration-700 ${
+                                    isStatTextsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
+                                }`}>
+                                    <div>Match</div>
+                                    <div>Played</div>
+                                </div>
                             </div>
-                            <div className="mt-2 flex flex-col justify-center items-center leading-[1.1] font-light">
-                                <div>Match</div>
-                                <div>Played</div>
+                            <div className="w-20 flex flex-col justify-center items-center">
+                                <div className="text-4xl font-bold">
+                                    <AnimatedNumber 
+                                        from={0}
+                                        to={(-1000 < bankroll && bankroll < 1000) ? bankroll : (bankroll/1000)}
+                                        duration={3000} 
+                                    />
+                                </div>
+                                <div className={`mt-2 flex flex-col justify-center items-center leading-[1.1] font-light transition-all duration-700 ${
+                                    isStatTextsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
+                                }`}>
+                                    <div>All-time</div>
+                                    <div>Earned</div>
+                                </div>
+                            </div>
+                            <div className="w-20 flex flex-col justify-center items-center">
+                                <div className="text-4xl font-bold">
+                                    <AnimatedNumber 
+                                        from={0}
+                                        to={totalMatch !== 0 ? (bankroll / totalMatch) : 0}
+                                        duration={3000} 
+                                    />
+                                </div>
+                                <div className={`mt-2 flex flex-col justify-center items-center leading-[1.1] font-light transition-all duration-700 ${
+                                    isStatTextsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full"
+                                }`}>
+                                    <div>Profit/</div>
+                                    <div>Game</div>
+                                </div>
                             </div>
                         </div>
-                        <div className="w-20 flex flex-col justify-center items-center">
-                            <div className="text-4xl font-bold">
-                                {(-1000 < bankroll && bankroll < 1000) ? bankroll : `${(bankroll/1000).toFixed(1)}K`}
-                            </div>
-                            <div className="mt-2 flex flex-col justify-center items-center leading-[1.1] font-light">
-                                <div>All-time</div>
-                                <div>Earned</div>
-                            </div>
-                        </div>
-                        <div className="w-20 flex flex-col justify-center items-center">
-                            <div className="text-4xl font-bold">
-                                {totalMatch !== 0 ? (bankroll / totalMatch).toFixed(1) : 0}
-                            </div>
-                            <div className="mt-2 flex flex-col justify-center items-center leading-[1.1] font-light">
-                                <div>Profit/</div>
-                                <div>Game</div>
-                            </div>
-                        </div>
-                    </div>
+                    )}
                 </div>
                 
             </section>

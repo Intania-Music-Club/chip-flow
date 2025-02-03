@@ -9,11 +9,11 @@ import { useState, useEffect } from "react";
 
 const HomePage = () => {
   const { data: session, status } = useSession();
-  console.log(session);
+  //console.log(session);
 
-  const [logOutText, setLogOutText] = useState("Log Out");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const handleSignOut = () => {
-    setLogOutText("Log Out ...");
+    setIsLoggingOut(true);
     signOut({ callbackUrl: "/" });
   };
 
@@ -89,11 +89,15 @@ const HomePage = () => {
             <button
                 type="button"
                 onClick={handleSignOut}
-                className={`text-bold bg-[#C63C51] mt-3 w-24 rounded-md text-sm text-center py-1 transition-all duration-500 hover:scale-110 ${
-                    isLogOutVisble ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
-                }`}
-            >
-                {logOutText}
+                className={`relative text-bold bg-[#C63C51] mt-3 flex w-32 justify-center items-center rounded-md text-sm py-1 transition-all duration-500 hover:scale-110 
+                    ${isLogOutVisble ? "opacity-80 translate-x-0" : "opacity-0 -translate-x-8"}
+            `}>
+                Log Out
+                <div className={`absolute right-2 transition-all duration-300 ${
+                    isLoggingOut ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
+                }`}>
+                    <div className="w-4 h-4 border-4 border-gray-200 border-t-primary-red rounded-full animate-spin"></div>
+                </div>
             </button>
         </div>
 

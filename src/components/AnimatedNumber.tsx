@@ -1,43 +1,51 @@
-'use client'
+import { useEffect, useRef } from "react";
 
-import { useEffect, useState } from 'react';
-
-interface AnimatedNumberProps {
-    targetValue: number;  // The value you want to animate to
-    duration: number;      // The duration for the animation in milliseconds
+// Easing function (easeOutCubic for stronger deceleration)
+function easeOut(t: number): number {
+    return 1 - Math.pow(1 - t, 4);
 }
 
-const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ targetValue, duration }) => {
-    const [currentValue, setCurrentValue] = useState(0);
+interface AnimateNumberProps {
+    from: number;
+    to: number;
+    duration: number;
+}
+
+const AnimateNumber: React.FC<AnimateNumberProps> = ({ from, to, duration }) => {
+    const numberRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const startTime = performance.now();
-        const animateNumber = (currentTime: number) => {
-            // Calculate the elapsed time
-            const elapsedTime = currentTime - startTime;
-            // Calculate the progress of the animation
-            const progress = Math.min(elapsedTime / duration, 1); // Ensure it doesn't exceed 1
-            // Update the number based on progress
-            setCurrentValue(Math.floor(progress * targetValue));
+        const element = numberRef.current;
+        let startTime: number;
 
-            // If the progress is less than 1, keep animating
-            if (progress < 1) {
-                requestAnimationFrame(animateNumber);
-            } else {
-                setCurrentValue(targetValue);  // Set the exact target value once animation ends
+        function animate(time: number) {
+            if (!startTime) startTime = time;
+            const timeElapsed = time - startTime;
+            const progress = Math.min(timeElapsed / duration, 1); // Ensure it doesn't go beyond 1
+
+            const easedProgress = easeOut(progress); // Apply easing for deceleration
+            const currentNumber = Math.floor(from + (to - from) * easedProgress);
+
+            // Opacity is based on number progress
+            const opacity = easeOut(progress);
+
+            if (element) {
+                element.textContent = currentNumber.toString();
+                element.style.opacity = opacity.toString();
             }
-        };
 
-        // Start the animation
-        requestAnimationFrame(animateNumber);
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        }
 
-    }, [targetValue, duration]);
+        requestAnimationFrame(animate);
+    }, [from, to, duration]);
 
-    return (
-        <div className="text-4xl font-bold">
-            {currentValue}
-        </div>
+    return (<div 
+                ref={numberRef} 
+                style={{ opacity: 0 }}>0</div>
     );
 };
 
-export default AnimatedNumber;
+export default AnimateNumber;

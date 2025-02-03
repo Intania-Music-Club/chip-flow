@@ -56,7 +56,7 @@ export default function LandingPage() {
               : "-translate-y-16 opacity-0"
           }`}
         >
-          CHIPFLOW
+          CHIPPY
         </h1>
         <h1
           className={`text-center mt-5 font-light transition-all duration-500 ease-out transform ${
