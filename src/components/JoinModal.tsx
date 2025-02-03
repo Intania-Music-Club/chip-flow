@@ -7,6 +7,10 @@ interface ModalProps {
   onClose: () => void;
 }
 
+const golobby = () => {
+  window.location.href = "/lobby";
+};
+
 const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -40,7 +44,10 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
           className=" placeholder-[#9D9D9D] caret-[#9D9D9D] text-white text-6xl mt-10 font-bold bg-transparent text-center w-full outline-none ring-0"
         ></input>
 
-        <button className="bg-[#C63C51] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8">
+        <button
+          onClick={golobby}
+          className="bg-[#C63C51] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8"
+        >
           JOIN
         </button>
       </div>
