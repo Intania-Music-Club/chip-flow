@@ -17,11 +17,7 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
     onClick={onClose} // คลิกที่พื้นหลังปิด Modal
     >
       <div
-<<<<<<< HEAD:src/app/home/components/CreateModal.tsx
-        className="bg-[#303030] fixed bottom-0 w-full pb-10 rounded-t-[40px] px-5"
-=======
         className={`bg-[#303030] fixed bottom-0 w-full h-3/4 rounded-t-[40px] px-5 transition-all duration-300 ease-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-100 translate-y-full"}`}
->>>>>>> 0cb70ebeb234ee21a93bf8fe13516231bf450ac7:src/components/CreateModal.tsx
         onClick={(e) => e.stopPropagation()} // หยุดการปิดเมื่อคลิกใน Modal
       >
         <div className="mt-7 h-10 flex items-center justify-between w-full">
