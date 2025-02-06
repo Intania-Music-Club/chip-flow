@@ -16,7 +16,7 @@ declare module "next-auth" {
     user: {
       id: string;
       email: string;
-      username: string;
+      name: string;
       image?: string;
       bankroll: number;
       roomJoining: RoomJoining | null;
@@ -27,7 +27,7 @@ declare module "next-auth" {
   interface User {
     id: string;
     email: string;
-    username: string;
+    name: string;
     image?: string;
     bankroll: number;
     roomJoining: RoomJoining | null;
@@ -39,14 +39,3 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    id: string;
-    email: string;
-    username: string;
-    image?: string;
-    bankroll: number;
-    roomJoining: RoomJoining | null;
-    roomJoined: RoomReference[];
-  }
-}
