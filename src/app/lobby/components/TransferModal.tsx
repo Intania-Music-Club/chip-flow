@@ -7,26 +7,21 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+const TransferModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
 
   return (
     <div
-      className={`fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
-        isOpen
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-0 pointer-events-none"
-      }`}
+      className="fixed inset-0 bg-gradient-to-t from-black to-transparent"
       onClick={onClose} // คลิกที่พื้นหลังปิด Modal
     >
       <div
-        className={`bg-[#303030] fixed bottom-0 w-full h-3/4 rounded-t-[40px] px-5 transition-all duration-300 ease-out ${
-          isOpen ? "opacity-100 translate-y-0" : "opacity-100 translate-y-full"
-        }`}
+        className="bg-[#303030] fixed bottom-0 w-full h-3/4 rounded-t-[40px] px-5"
         onClick={(e) => e.stopPropagation()} // หยุดการปิดเมื่อคลิกใน Modal
       >
-        <div className="mt-7 h-10 flex items-center justify-between w-full">
+        <div className=" mt-7 h-10 flex items-center justify-between w-full">
           <div className="text-3xl font-bold absolute left-0 right-0 text-center">
-            Create Game
+            Transfer
           </div>
           <button
             onClick={onClose}
@@ -52,4 +47,4 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default CreateModal;
+export default TransferModal;
