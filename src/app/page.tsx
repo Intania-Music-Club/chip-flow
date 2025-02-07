@@ -14,7 +14,6 @@ type ProvidersType = Record<string, ClientSafeProvider> | null;
 
 export default function LandingPage() {
   const isPWA = useIsPWA();
-  const { data: session } = useSession();
 
   const [providers, setProviders] = useState<ProvidersType>(null);
   const [isVisibleProvider, setIsVisibleProvider] = useState(false);
@@ -57,7 +56,7 @@ export default function LandingPage() {
               : "-translate-y-16 opacity-0"
           }`}
         >
-          CHIPFLOW
+          CHIPPY
         </h1>
         <h1
           className={`text-center mt-5 font-light transition-all duration-500 ease-out transform ${
