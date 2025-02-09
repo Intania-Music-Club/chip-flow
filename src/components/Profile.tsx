@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { RoomReference } from "next-auth";
-import { Check, X } from 'lucide-react';
+import { Check, X, ChevronLeft } from 'lucide-react';
 import AnimatedNumber from "./AnimatedNumber";
   
 interface ProfileProps {
@@ -100,8 +100,8 @@ const Profile: React.FC<ProfileProps> = ({ userId, name, image, roomJoined, bank
 
     return (
     <div className="flex flex-col mx-6 overflow-hidden">
-        <nav className="mt-6 mb-20 text-3xl font-bold hover:cursor-pointer" onClick={handleGoBackClicked}>
-            <div>{`<`}</div>
+        <nav className="mt-10 mb-20 font-bold hover:cursor-pointer" onClick={handleGoBackClicked}>
+            <ChevronLeft />
         </nav>
         <div className="flex flex-col items-center">
             <section className={`relative w-full min-h-[220px] bg-white flex flex-col justify-center items-center text-black rounded-2xl transition-all duration-700 ${
@@ -118,9 +118,15 @@ const Profile: React.FC<ProfileProps> = ({ userId, name, image, roomJoined, bank
                         }`}
                     />
                     <div className="relative flex justify-center items-center">
-                        <div className={`mt-3 text-2xl font-bold transition-all duration-500 ${
-                            isNameVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"
-                        }`}>
+                        <div className={`mt-3 text-2xl font-bold transition-all duration-500 
+                            ${isNameVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"}
+                            ${name.length >= 18 ? 
+                                'text-lg' : 
+                                name.length >= 15 ?
+                                    'text-xl':
+                                    'text-2xl'
+                            }
+                        `}>
                             {!isOwnProfile ? (
                                 <div>{name}</div>
                             ) : ( 
@@ -152,7 +158,7 @@ const Profile: React.FC<ProfileProps> = ({ userId, name, image, roomJoined, bank
                                             </div>
                                         )}
                                     </form>
-                                    <div className={`absolute top-[2px] transition-all duration-300 ${
+                                    <div className={`text-2xl absolute top-[2px] transition-all duration-300 ${
                                         isNameChanging ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"
                                     }`}>
                                         Changing Name ...

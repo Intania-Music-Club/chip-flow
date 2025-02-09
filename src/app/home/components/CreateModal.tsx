@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 import CloseIcon from "../../../../public/images/close-icon.svg";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,6 +10,50 @@ interface ModalProps {
 }
 
 const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+  const { data:session } = useSession();
+  const router = useRouter();
+  const [multiplierFactor, setMultiplierFactor] = useState<string>("");
+  const [isValidMultiplerFactor, setIsValidMultiplierFactor] = useState(true);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setIsValidMultiplierFactor(true);
+      const value = parseInt(e.currentTarget.value);
+      if (value > 10) {
+        e.currentTarget.value = '10'; // Auto-correct values over 10
+        setIsValidMultiplierFactor(false);
+      } else if (value < 1 || isNaN(value)) {
+        e.currentTarget.value = '';   // Clear if less than 1 or empty
+        setIsValidMultiplierFactor(false);
+      }
+      setMultiplierFactor(e.currentTarget.value);
+  };
+
+  const handleCreateRoom = async () => {
+    if(!multiplierFactor || multiplierFactor === "") {
+      alert("Please enter a multipler factor");
+    }
+
+    try {
+      const response = await fetch('/api/room/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          userId: session?.user.id,
+          multiplierFactor: (1 / Number(multiplierFactor)),
+        })
+      });
+
+      if(!response.ok) {
+        throw new Error("Failed to create new room");
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      router.push(`/lobby/${data.PIN}`)
+    } catch(error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div
@@ -35,16 +81,33 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
             <Image src={CloseIcon} alt="close" />
           </button>
         </div>
+        <div className="w-full mt-10 flex justify-center items-center text-6xl font-bold text-center gap-4">
+          <div className="text-end">1</div>
+          <div>/</div>
+          <input
+            type="number"
+            placeholder="M.F."
+            inputMode="decimal"
+            autoFocus
+            value={multiplierFactor}
+            onInput={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-') {
+                e.preventDefault();  // Prevent typing 'e', 'E', '+', and '-'
+              }
+            }}
+            className="w-32 text-center placeholder-[#9D9D9D] caret-[#9D9D9D] text-white bg-transparent outline-none ring-0"
+          />
+        </div>
 
-        <input
-          type="number"
-          placeholder="M.F."
-          inputMode="decimal"
-          autoFocus
-          className=" placeholder-[#9D9D9D] caret-[#9D9D9D] text-white text-6xl mt-10 font-bold bg-transparent text-center w-full outline-none ring-0"
-        ></input>
+        {!isValidMultiplerFactor && (
+          <div className="mt-3 text-primary-red text-center">Please enter only positive integer not exceeding 10 </div>
+        )}
 
-        <button className="bg-[#D95F59] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8">
+        <button
+          onClick={handleCreateRoom}
+          className="bg-[#D95F59] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8"
+        >
           CREATE
         </button>
       </div>

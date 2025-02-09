@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  ClientSafeProvider,
-  getProviders,
-  signIn,
-  useSession,
-} from "next-auth/react";
+import { ClientSafeProvider, getProviders, signIn } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import useIsPWA from "../components/useIsPWA";
