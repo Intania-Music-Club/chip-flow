@@ -109,6 +109,7 @@ const HomePage = () => {
                 width={70}
                 height={70}
                 className="mt-3 rounded-full transition-all duration-150 hover:scale-110"
+                priority
             />
           </Link>
         </div>

@@ -27,12 +27,11 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
           })
         });
 
-        if(response.ok) {
-          router.push(`/lobby/${PIN}`);
+        if(!response.ok) {
+          alert(`There's no Room PIN: ${PIN}`);
+          throw new Error(`Failed to join room with PIN: ${PIN}`)
         }
-        else {
-          throw new Error("Failed to join the room");
-        }
+        router.push(`/lobby/${PIN}`);
       } catch(error) {
         console.log(error);
       }

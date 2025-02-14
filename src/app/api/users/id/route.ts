@@ -24,7 +24,7 @@ export const GET = async (req: Request) => {
         
     } catch (error) {
         console.log(error);
-        return new NextResponse("Fetching User by email failed", {
+        return new NextResponse("Fetching User by id failed", {
             status: 500
         })
     }
