@@ -3,6 +3,7 @@ import mongoose, { Schema, model, models } from "mongoose";
 const roomSchema = new Schema({
     PIN: {
         type: String,
+        unique: true,
         required: [true, 'PIN is required'],
     },
 
@@ -11,12 +12,10 @@ const roomSchema = new Schema({
         required: [true, 'multiplierFactor is required'],
     },
 
-    moderator: {
-        moderatorId: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
+    moderatorId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
 
     startTime: {
@@ -25,7 +24,8 @@ const roomSchema = new Schema({
     },
 
     endTime: {
-        type: Date,
+        type: Date ,
+        default: null,
     },
 
     players: {
@@ -34,29 +34,34 @@ const roomSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: 'User',
             },
-            buyin: {
+            totalBuyin: {
                 type: Number,
                 min: [0, 'Buy-in cannot be negative'],
+                default: 0,
             },
             remainingChips: {
                 type: Number,
                 min: [0, 'Remaining chips cannot be negative'],
+                default: 0,
             }
         }],
-        default: []
+        default: [],
     },
 
-    transaction: {
+    transactions: {
         type: [{
                 transactionId: { 
-                    type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() 
+                    type: mongoose.Schema.Types.ObjectId, 
+                    default: () => new mongoose.Types.ObjectId() 
                 },
-                seller: {
-                    type: String,
+                sellerId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User',
                     required: true,
                 },
-                buyer: {
-                    type: String,
+                buyerId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User',
                     required: true,
                 },
                 amount: {

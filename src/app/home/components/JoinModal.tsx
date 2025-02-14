@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 import CloseIcon from "../../../../public/images/close-icon.svg";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,7 +10,34 @@ interface ModalProps {
 }
 
 const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
-  
+  const {data:session} = useSession();
+  const [PIN, setPIN] = useState("");
+  const router = useRouter();
+  const handleRoomJoining = async () => {
+    if(PIN.length === 6) {
+      if(!session) {
+        console.error("User is not authenticated");
+      }
+      try {
+        const response = await fetch(`/api/room/join`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            userId: session?.user.id,
+            PIN: PIN,
+          })
+        });
+
+        if(response.ok) {
+          router.push(`/lobby/${PIN}`);
+        }
+        else {
+          throw new Error("Failed to join the room");
+        }
+      } catch(error) {
+        console.log(error);
+      }
+    }
+  }
   return (
     <div
       className={`fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
@@ -39,13 +68,18 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         <input
           type="text"
           maxLength={6}
+          value={PIN}
+          onChange={(e) => setPIN(e.target.value)}
           placeholder="PIN"
           inputMode="numeric"
           autoFocus
           className=" placeholder-[#9D9D9D] caret-[#9D9D9D] text-white text-6xl mt-10 font-bold bg-transparent text-center w-full outline-none ring-0"
         ></input>
 
-        <button className="bg-[#C63C51] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8">
+        <button
+          onClick={handleRoomJoining} 
+          className="bg-[#C63C51] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8"
+        >
           JOIN
         </button>
       </div>

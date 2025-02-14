@@ -2,7 +2,6 @@ import NextAuth, { NextAuthOptions, Session, User as NextAuthUser } from "next-a
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@/utils/database";
 import User from "@/models/user";
-import { JWT } from "next-auth/jwt";
 import { Types } from "mongoose";
 
 // Define the custom types for the session

@@ -1,13 +1,16 @@
 import Image from "next/image";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import CloseIcon from "../../../../public/images/close-icon.svg";
 
 interface ModalProps {
   isOpen: boolean;
+  buyinAmount: string;
+  setBuyinAmount: Dispatch<SetStateAction<string>>;
+  handleBuyin: () => void;
   onClose: () => void;
 }
 
-const BuyInModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+const BuyInModal: FC<ModalProps> = ({ isOpen, buyinAmount, setBuyinAmount, handleBuyin, onClose }) => {
   if (!isOpen) return null;
 
   return (
@@ -35,11 +38,15 @@ const BuyInModal: FC<ModalProps> = ({ isOpen, onClose }) => {
           type="number"
           placeholder="CHIPS"
           inputMode="decimal"
+          value={buyinAmount}
+          onChange={(e) => setBuyinAmount(e.target.value)}
           autoFocus
           className=" placeholder-[#9D9D9D] caret-[#9D9D9D] text-white text-6xl mt-10 font-bold bg-transparent text-center w-full outline-none ring-0"
         ></input>
 
-        <button className="bg-[#85A947] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8">
+        <button 
+          onClick={() => {handleBuyin(); onClose();}}
+          className="bg-[#85A947] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8">
           BUY
         </button>
       </div>
