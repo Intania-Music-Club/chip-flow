@@ -1,13 +1,15 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Lobby from '../components/Lobby';
 import { useParams } from 'next/navigation';
+import Loading from '@/components/Loading';
 
 interface Player {
     userId: string,
     image: string,
     name: string,
+    email: string,
     remainingChips: number,
     totalBuyin: number,
   }
@@ -18,6 +20,7 @@ interface Room {
     moderatorId: string,
     moderatorName: string;
     moderatorImg: string;
+    moderatorEmail: string;
     multiplierFactor: number;
     players: Player[];
     transactions: [];
@@ -25,15 +28,14 @@ interface Room {
 }
 
 const LobbyPage = () => {
-    const {PIN} = useParams();
-    const [isLoading, setIsloading] = useState(true);
-    const [roomFetched, setIsRoomFetched] = useState(false);
+    const { PIN } = useParams();
     const [room, setRoom] = useState<Room | undefined>(undefined);
+    const [trigger, setTrigger] = useState(0);
 
     useEffect(() => {
-        try {
-            const fetchRoom = async () => {
-                const response = await fetch(`/api/room/get/${PIN}`, {
+        const fetchRoom = async () => {
+            try {
+                const response = await fetch(`/api/room/get?PIN=${PIN}`, {
                     method: "GET",
                 });
     
@@ -42,43 +44,32 @@ const LobbyPage = () => {
                 }
     
                 const data = await response.json();
-                // console.log(data);
-                setRoom({
-                    roomId: data.roomId,
-                    roomPIN: data.roomPIN,
-                    moderatorId: data.moderatorId,
-                    moderatorName: data.moderatorName,
-                    moderatorImg: data.moderatorImg,
-                    multiplierFactor: data.multiplierFactor,
-                    players: data.players,
-                    transactions: data.transactions,
-                });
-                setIsRoomFetched(true);
-                // console.log(room);
+                // console.log(data)
+                setRoom(data);
+            } catch(error) {
+                console.log(error);
             }
-            fetchRoom();
-        } catch(error) {
-            console.log(error);
-        }
-    }, []);
+        };
+        
+        fetchRoom();
+    }, [PIN, trigger]);
 
-    useEffect(() => {
-        if(roomFetched && room) {
-            console.log(room);
-            setIsloading(false);
-        }
-    }, [roomFetched])
+    if(!room) return <Loading />;
     return (
-        !isLoading && room &&
         <Lobby 
             roomId={room.roomId}
             roomPIN={Number(room.roomPIN)}
-            moderatorId={room.moderatorId}
-            moderatorName={room.moderatorName}
-            moderatorImg={room.moderatorImg}
+            moderator={{
+                id: room.moderatorId,
+                name: room.moderatorName,
+                image: room.moderatorImg,
+                email: room.moderatorEmail
+            }}
             multiplierFactor={room.multiplierFactor}
             players={room.players}
             transactions={room.transactions}
+            trigger={trigger}
+            setTrigger={setTrigger}
         />
     )
 }

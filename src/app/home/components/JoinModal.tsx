@@ -15,11 +15,15 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const handleRoomJoining = async () => {
     if(PIN.length === 6) {
+      if(!session) {
+        console.error("User is not authenticated");
+      }
       try {
-        const response = await fetch(`/api/room/join/${PIN}`, {
+        const response = await fetch(`/api/room/join`, {
           method: "PATCH",
           body: JSON.stringify({
             userId: session?.user.id,
+            PIN: PIN,
           })
         });
 

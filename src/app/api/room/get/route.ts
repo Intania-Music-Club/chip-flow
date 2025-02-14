@@ -1,7 +1,7 @@
 import Room from "@/models/room";
 import User from "@/models/user";
 import { connectToDB } from "@/utils/database";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
     PIN: string;
@@ -11,6 +11,7 @@ interface Player {
     userId: string,
     image: string,
     name: string,
+    email: string,
     remainingChips: number,
     totalBuyin: number,
 }
@@ -19,18 +20,23 @@ interface RoomFromPlayer {
     userId: string,
     remainingChips: number,
     totalBuyin: number,
-  }
+}
 
 
-export const GET = async (req: Request, { params }: {params: Params}) => {
+export const GET = async (req: NextRequest) => {
     try {
-        const {PIN} = await params;
+        const { searchParams } = new URL(req.url);
+        const PIN = searchParams.get("PIN");
+
+        if(!PIN) {
+            return new NextResponse("PIN is required", { status: 400 });
+        }
         await connectToDB();
 
         const room = await Room.findOne({PIN: PIN});
 
         if(!room) {
-            return new NextResponse(`Room PIN: ${PIN} not founded`, {status: 404,})
+            return new NextResponse(`Room PIN: ${PIN} not founded`, {status: 404})
         }
         // console.log(room);
 
@@ -53,6 +59,7 @@ export const GET = async (req: Request, { params }: {params: Params}) => {
                 userId: player.userId,
                 name: user?.username || player.name,
                 image: user?.image || player.image,
+                email: user?.email || player.email,
                 remainingChips: player.remainingChips,
                 totalBuyin: player.totalBuyin,
             }
@@ -67,6 +74,7 @@ export const GET = async (req: Request, { params }: {params: Params}) => {
             moderatorId: room.moderatorId.toString(),
             moderatorName: moderator.username,
             moderatorImg: moderator.image,
+            moderatorEmail: moderator.email,
             players: formattedUsers,
         }), {
             status: 200,

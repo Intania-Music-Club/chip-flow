@@ -16,7 +16,7 @@ const Transaction: React.FC<PlayerStatProps> = ({
   amount,
 }) => {
   return (
-    <div className="flex flex-col gap-y-3 bg-black bg-opacity-20 px-3 py-3">
+    <div className="flex flex-col gap-y-3 bg-black  border border-transparent rounded-xl bg-opacity-20 px-3 py-3">
       <div className="grid grid-cols-3">
         <div className="flex items-center gap-x-2">
           <Image

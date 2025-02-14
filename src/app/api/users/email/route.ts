@@ -11,20 +11,30 @@ export const GET = async (req: Request) => {
         const emailRequested = searchParams.get("email");
         const email = `${emailRequested}@gmail.com`
         const user = await User.findOne({email: email});
-        if(!user) {
+        if(user) {
+            return NextResponse.json({
+                userId: user._id,
+                name: user.username,
+                image: user.image,
+                roomJoined: user.roomJoined,
+                bankroll: user.bankroll,
+            }, { status: 200 });
+        }
+        const anotherEmail = `${emailRequested}@student.chula.ac.th`;
+        const anotherUser = await User.findOne({email: anotherEmail});
+        
+        if(!anotherUser) {
             return new NextResponse("User not found", {
                 status: 404
             });
         }
-        // console.log(user);
 
         return NextResponse.json({
-            userId: user._id,
-            name: user.username,
-            image: user.image,
-            roomJoined: user.roomJoined,
-            bankroll: user.bankroll,
-
+            userId: anotherUser._id,
+            name: anotherUser.username,
+            image: anotherUser.image,
+            roomJoined: anotherUser.roomJoined,
+            bankroll: anotherUser.bankroll,
         }, { status: 200 });
         
     } catch (error) {

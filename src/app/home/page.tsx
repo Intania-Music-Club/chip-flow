@@ -77,7 +77,7 @@ const HomePage = () => {
   const userImg = session?.user?.image ?? "/";
 
   return (
-    <div className="pt-20 mx-5 h-screen overflow-x-hidden">
+    <div className="pt-20 mx-5 h-screen overflow-x-hidden overflow-y-hidden">
       <div className="grid grid-cols-[2fr_1fr] mx-2">
         <div className="flex flex-col justify-start">
             <div className={`font-bold text-xl transition-all duration-700 ${isNameVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"}`}>

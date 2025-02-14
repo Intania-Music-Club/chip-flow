@@ -1,60 +1,64 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import BuyInModal from "./BuyInModal";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import BackButton from "@/components/BackButton";
 import PlayerStats from "./PlayerStats";
 import Transaction from "./Transaction";
+import Footer from "./Footer";
+import BuyInModal from "./BuyInModal";
+import AnimateNumber from "@/components/AnimatedNumber";
 
 interface Player {
-  userId: string,
-  image: string,
-  name: string,
-  remainingChips: number,
-  totalBuyin: number,
+  userId: string;
+  image: string;
+  name: string;
+  email: string;
+  remainingChips: number;
+  totalBuyin: number;
+}
+
+interface Moderator {
+  id: string;
+  name: string;
+  image: string;
+  email: string;
 }
 
 interface Transaction {
-  transactionId: string,
-  seller: {
-    id: string,
-    name: string,
-  },
-  buyer: {
-    id: string,
-    name: string,
-  },
-  amount: number,
-  timeStamp: Date
+  transactionId: string;
+  sellerId: string;
+  buyerId: string;
+  amount: number;
+  timeStamp: Date;
 }
 
 interface RoomProps {
-  roomId: string,
-  roomPIN: number,
-  moderatorId: string,
-  moderatorName: string,
-  moderatorImg: string,
-  multiplierFactor: number,
-  players: Player[],
-  transactions: Transaction[],
+  roomId: string;
+  roomPIN: number;
+  moderator: Moderator;
+  multiplierFactor: number;
+  players: Player[];
+  transactions: Transaction[];
+  trigger: number;
+  setTrigger: Dispatch<SetStateAction<number>>
 }
 
 
 const Lobby: React.FC<RoomProps> = ({
   roomId,
   roomPIN, 
-  moderatorId,
-  moderatorName, 
-  moderatorImg, 
+  moderator, 
   multiplierFactor,
   players,
   transactions,
+  trigger,
+  setTrigger,
 }) => {
   const { data: session } = useSession();
   const userImg = session?.user?.image ?? "/";
-  const [sortedPlayers, setSortedPlayers] = useState<Player[]>([]);
-  const [activeChips, setActiveChips] = useState(0);
 
   const [isBuyInModalOpen, setIsBuyInModalOpen] = useState(false);
   const openBuyInModal = () => setIsBuyInModalOpen(true);
@@ -64,83 +68,148 @@ const Lobby: React.FC<RoomProps> = ({
     return number.toString().replace(/(\d{3})(\d{3})/, '$1 $2');
   }
 
+
+  const [sortedPlayers, setSortedPlayers] = useState<Player[]>([]);
   useEffect(() => {
     const sortedResult = players.map(player => ({
       ...player,
     })).sort((a,b) => (b.remainingChips - b.totalBuyin) - (a.remainingChips - a.totalBuyin));
 
     setSortedPlayers(sortedResult);
-  }, [players])
+  }, [players]);
 
+
+  const [activeChips, setActiveChips] = useState(0);
   useEffect(() => {
     const totalChip = players.reduce((sum, player) => sum + player.totalBuyin, 0);
     setActiveChips(totalChip);
-  }, [players])
+  }, [players]);
+
+
+  const [buyinAmount, setBuyinAmount] = useState<string>('');
+  const getPlayerById = (players: Player[] | undefined, userId: string | undefined): Player | undefined => {
+    return players?.find(player => player.userId === userId);
+  }
+  const handleBuyin = async () => {
+    try {
+        const player = getPlayerById(players, session?.user.id);
+        const response = await fetch(`/api/room/buyin`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                buyinAmount: Number(buyinAmount),
+                roomId: roomId,
+                userId: player?.userId,
+            })
+        });
+        if(!response.ok){
+            throw new Error("Failed to buy chips");
+        }
+        setTrigger(trigger % 2 ? 0:1);
+
+    } catch(error) {
+        console.log(error);
+        alert("Buy-in failed, try again.");
+    }
+  }
+
+  const router = useRouter();
+    const handleProfileClick = ({userId, email} : {userId: string, email: string}) => {
+      if (session?.user.id === userId)
+          router.push("/profile")
+      else
+          router.push(`/profile/${email.split('@')[0].split('%40')[0]}`)
+    }
+
   return (
     <>
-      <div className="mx-5 mt-14 flex flex-col gap-y-5 pb-32">
-        <div className="grid grid-cols-[2fr_1fr]">
+      <div className="mx-5 mt-5 flex flex-col gap-y-2 pb-32">
+        <div className="flex">
+          <BackButton size={45}/>
+        </div>
+
+        {/* Header */}
+        <header className="mt-3 grid grid-cols-[2fr_1fr]">
           <div className="flex flex-col justify-start font-bold">
-            <div className="text-1xl text-gray-500">Room PIN</div>
+            <div className="text-xl text-gray-500">Room PIN</div>
             <div className="mt-1 text-4xl">{formatPIN(roomPIN)}</div>
           </div>
-          <div className="flex justify-end items-start">
-            <div className="bg-[#C63C51] mt-3 px-2 py-3 font-bold text-md rounded-lg">
-              END GAME
+          <div className="flex justify-center items-center">
+            <div className="text-center w-28 bg-[#C63C51] mt-3 px-2 py-2 font-bold text-sm rounded-lg">
+                END GAME
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="flex flex-col gap-t-5">
-          <div className="flex justify-start text-lg items-center gap-2">
-            <div className="mr-2 font-light">Moderator</div>
-            <div className="font-bold">{moderatorName}</div>
-            <Image
-              src={moderatorImg}
-              alt="user profile"
-              width={25}
-              height={25}
-              className="rounded-full mx-1"
-            />
+        
+        {/* Room Detail */}
+        <div className="flex flex-col">
+          <div className="flex flex-col justify-start items-start text-lg">
+            <div className="text-gray-500">Moderator</div>
+            <div
+              onClick={() => handleProfileClick({
+                userId: moderator.id,
+                email: moderator.email,
+              })} 
+              className="flex justify-center items-center gap-2">
+              <Image
+                src={moderator.image}
+                alt="user profile"
+                width={25}
+                height={25}
+                className="rounded-full mx-1"
+              />
+              <div className="font-bold text-xl">{moderator.name}</div>
+            </div>
           </div>
-          <div className="mt-10 grid grid-cols-2">
+          <div className="mt-6 grid grid-cols-2 text-gray-400">
             <div className="flex flex-col">
-              <div className="font-light text-sm">Active Chips</div>
-              <div className="font-bold">{activeChips} CHIPS</div>
+              <div className="font-light text-gray-400 text-sm">Active Chips</div>
+              <div className="flex gap-2 text-lg">
+              <AnimateNumber 
+                from={0}
+                to={activeChips}
+                duration={1500}
+              />
+                CHIPS
+              </div>
             </div>
             <div className="flex flex-col items-end">
-              <div className="font-light text-sm">Multiplier Factor</div>
-              <div className="font-bold">1 CHIP = {multiplierFactor}</div>
+              <div className="font-light text-gray-400 text-sm">Multiplier Factor</div>
+              <div className="text-lg">1 CHIP = 1 / {1 / multiplierFactor}</div>
             </div>
           </div>
         </div>
 
-        <div className="mt-2">
+        {/* Players */}
+        <div className="mt-8">
           <div>Players <span className="text-gray-400">{`(${players.length})`}</span></div>
           <hr />
-          <div className="mt-5">
+          <div className="mt-3">
             <div className="flex flex-col gap-y-1">
-              {sortedPlayers.map(({userId, image, name, remainingChips, totalBuyin}, idx) => (
+              {sortedPlayers.map((user, idx) => (
                 <PlayerStats
-                  key={idx} 
-                  roomId={roomId}
-                  imgUrl={image}
-                  userId={userId}
-                  username={name}
-                  remainingChips={remainingChips}
-                  balance={remainingChips-totalBuyin}
-                  players={players}
-                  isModerator={session?.user.id === moderatorId}
+                    key={idx} 
+                    roomId={roomId}
+                    user={user}
+                    balance={user.remainingChips-user.totalBuyin}
+                    players={players}
+                    isModerator={session?.user.id === moderator.id}
+                    handleProfileClick={() => handleProfileClick({
+                      userId: user.userId,
+                      email: user.email,
+                    })}
                 />
               ))}
             </div>
           </div>
         </div>
 
-        <div>
-          <div>Transaction</div>
+
+        {/* Transactions */}
+        <div className="mt-12">
+          <div>Transactions</div>
           <hr />
-          <div className="mt-2">
+          <div className="mt-3">
             <div className="flex flex-col gap-y-1">
               <Transaction
                 senderName={"danny"}
@@ -176,31 +245,22 @@ const Lobby: React.FC<RoomProps> = ({
       </div>
 
       {/* footer */}
-      <footer className="bg-white text-black  h-24 fixed bottom-0 w-full px-5">
-        <div className="grid grid-cols-[2fr_1fr] mt-3">
-          <div className="text-lg font-bold flex justify-start items-center gap-x-4">
-            <Image
-              src={userImg}
-              alt="user profile"
-              width={44}
-              height={44}
-              className="rounded-full"
-            />
-            {session?.user.name}
-          </div>
-          <div className="flex justify-end items-center">
-            <button
-              onClick={openBuyInModal}
-              className="bg-black text-white py-2 px-4 rounded-md text-lg font-bold"
-            >
-              Buy In
-            </button>
-          </div>
-        </div>
-      </footer>
+      <Footer 
+          openBuyInModal={openBuyInModal} 
+          handleProfileClick={() => handleProfileClick({
+            userId: session?.user.id ?? "",
+            email: session?.user.email ?? "/"
+          })}
+      />
 
       {/* Modal */}
-      <BuyInModal isOpen={isBuyInModalOpen} onClose={closeBuyInModal} />
+      <BuyInModal 
+        isOpen={isBuyInModalOpen} 
+        onClose={closeBuyInModal} 
+        buyinAmount={buyinAmount}
+        setBuyinAmount={setBuyinAmount}
+        handleBuyin={handleBuyin}
+      />
     </>
   );
 };
