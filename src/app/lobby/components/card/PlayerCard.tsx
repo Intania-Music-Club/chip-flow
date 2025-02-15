@@ -45,8 +45,8 @@ const PlayerCard: React.FC<PlayerStatProps> = ({
     
     return (
         <>
-          <div className={`mt-2 bg-black border border-transparent rounded-xl bg-opacity-20 text-white grid grid-cols-[3fr_1fr] px-3 py-2 ${
-            isDropDownActive && "rounded-b-none"
+          <div className={`mt-2 bg-black border border-transparent rounded-xl bg-opacity-20 grid grid-cols-[2fr_1fr] px-3 py-2 ${
+            isDropDownActive ? "rounded-b-none " : "shadow-lg"
           }`}>
             <div className="text-md font-bold flex justify-start items-center gap-x-2">
               {/* User Info */}

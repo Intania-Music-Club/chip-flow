@@ -1,15 +1,16 @@
 "use client"
 
-import CreateModal from "@/app/home/components/CreateModal";
-import JoinModal from "@/app/home/components/JoinModal";
-import { signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { signOut, useSession } from "next-auth/react";
+import JoinModal from "@/app/home/components/JoinModal";
+import CreateModal from "@/app/home/components/CreateModal";
+import RoomCard from "@/app/home/components/RoomCard";
 
 const HomePage = () => {
   const { data: session, status } = useSession();
-  //console.log(session);
+//   console.log(session);
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const handleSignOut = () => {
@@ -74,11 +75,10 @@ const HomePage = () => {
   const openCreateModal = () => setIsCreateModalOpen(true);
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
-  const userImg = session?.user?.image ?? "/";
-
   return (
     <div className="pt-20 mx-5 h-screen overflow-x-hidden overflow-y-hidden">
       <div className="grid grid-cols-[2fr_1fr] mx-2">
+        {/* Header */}
         <div className="flex flex-col justify-start">
             <div className={`font-bold text-xl transition-all duration-700 ${isNameVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"}`}>
                 Hi,
@@ -89,7 +89,7 @@ const HomePage = () => {
             <button
                 type="button"
                 onClick={handleSignOut}
-                className={`relative text-bold bg-[#C63C51] mt-3 flex w-32 justify-center items-center rounded-md text-sm py-1 transition-all duration-500 hover:scale-110 
+                className={`relative text-bold bg-[#C63C51] mt-3 flex w-32 justify-center items-center rounded-md text-sm py-1 transition-all duration-500 active:scale-95
                     ${isLogOutVisble ? "opacity-80 translate-x-0" : "opacity-0 -translate-x-8"}
             `}>
                 Log Out
@@ -100,11 +100,12 @@ const HomePage = () => {
                 </div>
             </button>
         </div>
-
+        
+        {/* Buttons */}
         <div className={`flex justify-end items-start transition-all duration-500 ${isImageVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}>
           <Link href="/profile">
             <Image
-                src={userImg}
+                src={session?.user.image ?? "/"}
                 alt="user profile"
                 width={70}
                 height={70}
@@ -116,7 +117,7 @@ const HomePage = () => {
       </div>
 
       <div className="grid grid-cols-2 mt-20 h-60 font-bold text-3xl">
-        <div className={`flex flex-col justify-center mr-2 bg-[#C63C51] rounded-2xl transition-all duration-700 hover:scale-105 ${
+        <div className={`flex flex-col justify-center mr-2 bg-[#C63C51] rounded-2xl transition-all duration-700 hover:scale-95 ${
             isButtonVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"
         }`}>
             <button
@@ -127,7 +128,7 @@ const HomePage = () => {
                 <p>JOIN</p>
             </button>
         </div>
-        <div className={`flex flex-col justify-center ml-2 bg-[#D95F59] rounded-2xl transition-all duration-700 hover:scale-105 ${
+        <div className={`flex flex-col justify-center ml-2 bg-[#D95F59] rounded-2xl transition-all duration-700 hover:scale-95 ${
             isButtonVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"
         }`}>
             <button
@@ -140,10 +141,20 @@ const HomePage = () => {
         </div>
       </div>
 
+      {session?.user.roomPINJoining && (
+        <div className="mt-16">
+            <div className="text-2xl font-bold">Active Room</div>
+            <hr className="opacity-50" />
+            <div className="mt-5">
+                <RoomCard roomPIN={session.user.roomPINJoining}/>
+            </div>
+        </div>
+      )}
+
       {/* Modal Component */}
-      <JoinModal isOpen={isJoinModalOpen} onClose={closeJoinModal} />
-      <CreateModal isOpen={isCreateModalOpen} onClose={closeCreateModal} />
-    </div>
+        <JoinModal isOpen={isJoinModalOpen} onClose={closeJoinModal} />
+        <CreateModal isOpen={isCreateModalOpen} onClose={closeCreateModal} />
+      </div>
   );
 };
 

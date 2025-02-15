@@ -225,7 +225,7 @@ const Lobby: React.FC<RoomProps> = ({
           <div>Transactions <span className="opacity-50">{`(${0})`}</span></div>
           <hr />
           <div className="mt-3">
-            <div className="flex flex-col gap-y-1">
+            <div className="flex flex-col gap-y-2">
               <TransactionCard
                 senderName={"danny"}
                 senderImgUrl={userImg}
@@ -249,7 +249,7 @@ const Lobby: React.FC<RoomProps> = ({
         <div>Buy-Ins <span className="opacity-50">{`(${buyins.length})`}</span></div>
           <hr />
           <div className="mt-3">
-            <div className="flex flex-col gap-y-1">
+            <div className="flex flex-col gap-y-2">
               {buyins.slice().reverse().map(({userId, amount, timeStamp}, idx) => (
                 <BuyinCard 
                   key={idx}

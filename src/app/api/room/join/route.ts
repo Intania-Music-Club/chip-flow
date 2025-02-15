@@ -32,14 +32,13 @@ export const PATCH = async (req: NextRequest) => {
         await room.save();
 
         const user = await User.findById(userId);
-        user.roomJoining = {
-            roomId: room.roomId,
-            roomPIN: PIN,
-            isModerator: (String(userId) === String(room.moderatorId))
+        if(!user) {
+            return new NextResponse("User not found", { status: 404,})
         }
+        user.roomPINJoining = PIN;
+        await user.save();
 
-        // console.log(user.roomJoining);
-
+        
         return new NextResponse("User added to room successfully", {
             status: 201,
         })

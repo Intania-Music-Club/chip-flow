@@ -47,7 +47,7 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   }
   return (
     <div
-      className={`fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
+      className={`z-10 fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
         isOpen
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"

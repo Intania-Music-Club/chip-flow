@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <Provider session={session} key={session?.user.id}>
-        <body className={`overscroll-none min-h-screen bg-radial-gradient bg-fixed ${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body className={`min-h-screen bg-radial-gradient bg-fixed ${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}
         </body>
       </Provider>

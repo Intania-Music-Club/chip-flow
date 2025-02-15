@@ -50,8 +50,8 @@ const BuyinCard: React.FC<Buyin> = ({
         return <></>
     }
     return (
-        <div className="space-y-2 px-3 py-3 bg-black bg-opacity-20 rounded-xl">
-            <div className="grid grid-cols-2">
+        <div className="space-y-2 px-3 py-3 bg-black bg-opacity-20 rounded-xl shadow-lg">
+            <div className="flex justify-between">
                 <div 
                     className="flex gap-2"
                     onClick={() => {handleProfileClick({userId: userId, email: user!.email})}}
