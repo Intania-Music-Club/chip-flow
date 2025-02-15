@@ -76,6 +76,7 @@ export const GET = async (req: NextRequest) => {
             moderatorImg: moderator.image,
             moderatorEmail: moderator.email,
             players: formattedUsers,
+            buyins: room.buyins,
         }), {
             status: 200,
         })

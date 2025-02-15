@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import Dropdown from "./Dropdown";
+import TransferDropdown from "../TransferDropdown";
 
 interface Player {
   userId: string;
@@ -29,10 +29,10 @@ const balanceColor = (balance: number) => {
     else if (balance < 0) 
         return "text-red-500";
     else 
-        return "text-gray-400";
+        return "opacity-50";
 }
 
-const PlayerStats: React.FC<PlayerStatProps> = ({
+const PlayerCard: React.FC<PlayerStatProps> = ({
   roomId,
   user,
   balance,
@@ -45,7 +45,9 @@ const PlayerStats: React.FC<PlayerStatProps> = ({
     
     return (
         <>
-          <div className="bg-black border border-transparent rounded-xl bg-opacity-20 text-white grid grid-cols-[3fr_1fr] px-3 py-2">
+          <div className={`mt-2 bg-black border border-transparent rounded-xl bg-opacity-20 text-white grid grid-cols-[3fr_1fr] px-3 py-2 ${
+            isDropDownActive && "rounded-b-none"
+          }`}>
             <div className="text-md font-bold flex justify-start items-center gap-x-2">
               {/* User Info */}
               <div
@@ -78,7 +80,7 @@ const PlayerStats: React.FC<PlayerStatProps> = ({
                 <div className={`${balanceColor(balance)}`}>
                   {formattedBalance} 
                 </div>
-                <div className="text-gray-400">
+                <div className="opacity-50">
                   ({user.totalBuyin})
                 </div>
             </div>
@@ -86,7 +88,7 @@ const PlayerStats: React.FC<PlayerStatProps> = ({
           
           {/* Dropdown */}
           {isDropDownActive && (
-            <Dropdown 
+            <TransferDropdown
                 roomId={roomId}
                 user={user}
                 players={players}
@@ -96,4 +98,4 @@ const PlayerStats: React.FC<PlayerStatProps> = ({
     );
 };
 
-export default PlayerStats;
+export default PlayerCard;

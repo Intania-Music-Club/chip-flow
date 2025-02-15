@@ -38,7 +38,7 @@ export const PATCH = async (req: NextRequest) => {
             isModerator: (String(userId) === String(room.moderatorId))
         }
 
-        console.log(user.roomJoining);
+        // console.log(user.roomJoining);
 
         return new NextResponse("User added to room successfully", {
             status: 201,

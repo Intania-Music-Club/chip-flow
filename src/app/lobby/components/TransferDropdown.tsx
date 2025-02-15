@@ -63,7 +63,7 @@ const Dropdown: React.FC<Dropdown> = ({
     }
     
     return (
-        <div className="mx-3 pt-1 pb-3 flex gap-5 justify-center items-center border border-t-0 rounded-b-lg text-sm">
+        <div className="pt-1 pb-3 flex gap-5 bg-black bg-opacity-20 justify-center items-center rounded-b-3xl text-sm">
             <select
                 ref={selectRef}
                 onChange={handleTransferPlayerChange}

@@ -1,15 +1,18 @@
 "use client";
 
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+
 import BackButton from "@/components/BackButton";
-import PlayerStats from "./PlayerStats";
-import Transaction from "./Transaction";
+import AnimateNumber from "@/components/AnimatedNumber";
+
 import Footer from "./Footer";
 import BuyInModal from "./BuyInModal";
-import AnimateNumber from "@/components/AnimatedNumber";
+import TransactionCard from "./card/TransactionCard";
+import PlayerCard from "./card/PlayerCard";
+import BuyinCard from "./card/BuyinCard";
 
 interface Player {
   userId: string;
@@ -35,6 +38,12 @@ interface Transaction {
   timeStamp: Date;
 }
 
+interface Buyin {
+  userId: string;
+  amount: number;
+  timeStamp: Date;
+}
+
 interface RoomProps {
   roomId: string;
   roomPIN: number;
@@ -44,6 +53,7 @@ interface RoomProps {
   transactions: Transaction[];
   trigger: number;
   setTrigger: Dispatch<SetStateAction<number>>
+  buyins: Buyin[];
 }
 
 
@@ -56,6 +66,7 @@ const Lobby: React.FC<RoomProps> = ({
   transactions,
   trigger,
   setTrigger,
+  buyins,
 }) => {
   const { data: session } = useSession();
   const userImg = session?.user?.image ?? "/";
@@ -90,6 +101,7 @@ const Lobby: React.FC<RoomProps> = ({
   const getPlayerById = (players: Player[] | undefined, userId: string | undefined): Player | undefined => {
     return players?.find(player => player.userId === userId);
   }
+
   const handleBuyin = async () => {
     try {
         const player = getPlayerById(players, session?.user.id);
@@ -104,25 +116,28 @@ const Lobby: React.FC<RoomProps> = ({
         if(!response.ok){
             throw new Error("Failed to buy chips");
         }
-        setTrigger(trigger % 2 ? 0:1);
-
     } catch(error) {
         console.log(error);
         alert("Buy-in failed, try again.");
+    } finally {
+      setTrigger(trigger % 2 ? 0:1);
+      setBuyinAmount("");
     }
   }
 
   const router = useRouter();
-    const handleProfileClick = ({userId, email} : {userId: string, email: string}) => {
-      if (session?.user.id === userId)
-          router.push("/profile")
-      else
-          router.push(`/profile/${email.split('@')[0].split('%40')[0]}`)
-    }
-
+  const handleProfileClick = ({userId, email} : {userId: string, email: string}) => {
+    if (session?.user.id === userId)
+        router.push("/profile")
+    else
+        router.push(`/profile/${email.split('@')[0].split('%40')[0]}`)
+  }
+  
+  // console.log(buyins);
   return (
     <>
       <div className="mx-5 mt-5 flex flex-col gap-y-2 pb-32">
+        {/* Back Button */}
         <div className="flex">
           <BackButton size={45}/>
         </div>
@@ -130,21 +145,21 @@ const Lobby: React.FC<RoomProps> = ({
         {/* Header */}
         <header className="mt-3 grid grid-cols-[2fr_1fr]">
           <div className="flex flex-col justify-start font-bold">
-            <div className="text-xl text-gray-500">Room PIN</div>
+            <div className="text-xl opacity-50">Room PIN</div>
             <div className="mt-1 text-4xl">{formatPIN(roomPIN)}</div>
           </div>
-          <div className="flex justify-center items-center">
+          {session?.user.id === moderator.id && (<div className="flex justify-center items-center">
             <div className="text-center w-28 bg-[#C63C51] mt-3 px-2 py-2 font-bold text-sm rounded-lg">
                 END GAME
             </div>
-          </div>
+          </div>)}
         </header>
 
         
         {/* Room Detail */}
         <div className="flex flex-col">
           <div className="flex flex-col justify-start items-start text-lg">
-            <div className="text-gray-500">Moderator</div>
+            <div className="">Moderator</div>
             <div
               onClick={() => handleProfileClick({
                 userId: moderator.id,
@@ -161,9 +176,9 @@ const Lobby: React.FC<RoomProps> = ({
               <div className="font-bold text-xl">{moderator.name}</div>
             </div>
           </div>
-          <div className="mt-6 grid grid-cols-2 text-gray-400">
+          <div className="mt-6 grid grid-cols-2 opacity-50">
             <div className="flex flex-col">
-              <div className="font-light text-gray-400 text-sm">Active Chips</div>
+              <div className="text-sm">Active Chips</div>
               <div className="flex gap-2 text-lg">
               <AnimateNumber 
                 from={0}
@@ -174,7 +189,7 @@ const Lobby: React.FC<RoomProps> = ({
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <div className="font-light text-gray-400 text-sm">Multiplier Factor</div>
+              <div className="text-sm">Multiplier Factor</div>
               <div className="text-lg">1 CHIP = 1 / {1 / multiplierFactor}</div>
             </div>
           </div>
@@ -182,12 +197,12 @@ const Lobby: React.FC<RoomProps> = ({
 
         {/* Players */}
         <div className="mt-8">
-          <div>Players <span className="text-gray-400">{`(${players.length})`}</span></div>
+          <div>Players <span className="opacity-50">{`(${players.length})`}</span></div>
           <hr />
           <div className="mt-3">
-            <div className="flex flex-col gap-y-1">
+            <div className="flex flex-col">
               {sortedPlayers.map((user, idx) => (
-                <PlayerStats
+                <PlayerCard
                     key={idx} 
                     roomId={roomId}
                     user={user}
@@ -206,39 +221,44 @@ const Lobby: React.FC<RoomProps> = ({
 
 
         {/* Transactions */}
-        <div className="mt-12">
-          <div>Transactions</div>
+        <div className="mt-5">
+          <div>Transactions <span className="opacity-50">{`(${0})`}</span></div>
           <hr />
           <div className="mt-3">
             <div className="flex flex-col gap-y-1">
-              <Transaction
+              <TransactionCard
                 senderName={"danny"}
                 senderImgUrl={userImg}
                 receiverName={"danny"}
                 recieverImgUrl={userImg}
                 amount={1000}
               />
-              <Transaction
+              <TransactionCard
                 senderName={"danny"}
                 senderImgUrl={userImg}
                 receiverName={"danny"}
                 recieverImgUrl={userImg}
                 amount={1000}
               />
-              <Transaction
-                senderName={"danny"}
-                senderImgUrl={userImg}
-                receiverName={"danny"}
-                recieverImgUrl={userImg}
-                amount={1000}
-              />
-              <Transaction
-                senderName={"danny"}
-                senderImgUrl={userImg}
-                receiverName={"danny"}
-                recieverImgUrl={userImg}
-                amount={1000}
-              />
+            </div>
+          </div>
+        </div>
+
+        {/* Buyins */}
+        <div className="mt-5">
+        <div>Buy-Ins <span className="opacity-50">{`(${buyins.length})`}</span></div>
+          <hr />
+          <div className="mt-3">
+            <div className="flex flex-col gap-y-1">
+              {buyins.slice().reverse().map(({userId, amount, timeStamp}, idx) => (
+                <BuyinCard 
+                  key={idx}
+                  userId={userId}
+                  amount={amount}
+                  timeStamp={timeStamp}
+                  handleProfileClick={handleProfileClick}
+                />
+              ))}
             </div>
           </div>
         </div>

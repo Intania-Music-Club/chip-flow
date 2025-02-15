@@ -6,13 +6,27 @@ import { useParams } from 'next/navigation';
 import Loading from '@/components/Loading';
 
 interface Player {
-    userId: string,
-    image: string,
-    name: string,
-    email: string,
-    remainingChips: number,
-    totalBuyin: number,
-  }
+    userId: string;
+    image: string;
+    name: string;
+    email: string;
+    remainingChips: number;
+    totalBuyin: number;
+}
+
+interface Transaction {
+    transactionId: string;
+    sellerId: string;
+    buyerId: string;
+    amount: number;
+    timeStamp: Date;
+}
+
+interface Buyin {
+    userId: string;
+    amount: number;
+    timeStamp: Date;
+}
 
 interface Room {
     roomId: string;
@@ -23,7 +37,8 @@ interface Room {
     moderatorEmail: string;
     multiplierFactor: number;
     players: Player[];
-    transactions: [];
+    transactions: Transaction[];
+    buyins: Buyin[];
 
 }
 
@@ -55,6 +70,7 @@ const LobbyPage = () => {
     }, [PIN, trigger]);
 
     if(!room) return <Loading />;
+    
     return (
         <Lobby 
             roomId={room.roomId}
@@ -70,6 +86,7 @@ const LobbyPage = () => {
             transactions={room.transactions}
             trigger={trigger}
             setTrigger={setTrigger}
+            buyins={room.buyins}
         />
     )
 }

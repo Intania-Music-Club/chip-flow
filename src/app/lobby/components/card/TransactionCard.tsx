@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ChevronsLeft } from "lucide-react";
 
 interface PlayerStatProps {
   senderImgUrl: string;
@@ -8,7 +9,7 @@ interface PlayerStatProps {
   amount: number;
 }
 
-const Transaction: React.FC<PlayerStatProps> = ({
+const TransactionCard: React.FC<PlayerStatProps> = ({
   senderImgUrl,
   senderName,
   recieverImgUrl,
@@ -28,8 +29,8 @@ const Transaction: React.FC<PlayerStatProps> = ({
           />
           <div>{senderName}</div>
         </div>
-        <div className="text-center gap-x-2 font-light text-sm flex justify-center items-center">
-          transfer to
+        <div className="flex justify-center opacity-50">
+          <ChevronsLeft />
         </div>
         <div className="flex items-center justify-end gap-x-2">
           <div>{receiverName}</div>
@@ -42,12 +43,12 @@ const Transaction: React.FC<PlayerStatProps> = ({
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 text-sm">
-        <div>Amount: {amount}</div>
-        <div className="flex justify-end text-gray-400">01/03/25 18:00</div>
+      <div className="grid grid-cols-2 text-sm opacity-50">
+        <div>01/03/25 18:00</div>
+        <div className="flex justify-end">{amount} CHIPS</div>
       </div>
     </div>
   );
 };
 
-export default Transaction;
+export default TransactionCard;

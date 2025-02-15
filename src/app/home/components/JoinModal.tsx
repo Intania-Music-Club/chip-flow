@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import CloseIcon from "../../../../public/images/close-icon.svg";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -37,6 +37,14 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
       }
     }
   }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (/^\d*$/.test(value)) {
+      setPIN(value === '' ? '' : value);
+    }
+  }
   return (
     <div
       className={`fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
@@ -68,7 +76,7 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
           type="text"
           maxLength={6}
           value={PIN}
-          onChange={(e) => setPIN(e.target.value)}
+          onChange={(e) => handleInputChange(e)}
           placeholder="PIN"
           inputMode="numeric"
           autoFocus
