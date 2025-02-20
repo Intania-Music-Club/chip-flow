@@ -69,8 +69,7 @@ const Lobby: React.FC<RoomProps> = ({
   buyins,
 }) => {
   const { data: session } = useSession();
-  const userImg = session?.user?.image ?? "/";
-
+  
   const [isBuyInModalOpen, setIsBuyInModalOpen] = useState(false);
   const openBuyInModal = () => setIsBuyInModalOpen(true);
   const closeBuyInModal = () => setIsBuyInModalOpen(false);
@@ -81,10 +80,10 @@ const Lobby: React.FC<RoomProps> = ({
 
 
   const [sortedPlayers, setSortedPlayers] = useState<Player[]>([]);
-  useEffect(() => {
+  useEffect(() => {  // sort prioritizely by balance and then totalBuyin
     const sortedResult = players.map(player => ({
       ...player,
-    })).sort((a,b) => (b.remainingChips - b.totalBuyin) - (a.remainingChips - a.totalBuyin));
+    })).sort((a,b) => (- b.totalBuyin - (- a.totalBuyin)));
 
     setSortedPlayers(sortedResult);
   }, [players]);
@@ -98,19 +97,14 @@ const Lobby: React.FC<RoomProps> = ({
 
 
   const [buyinAmount, setBuyinAmount] = useState<string>('');
-  const getPlayerById = (players: Player[] | undefined, userId: string | undefined): Player | undefined => {
-    return players?.find(player => player.userId === userId);
-  }
-
   const handleBuyin = async () => {
     try {
-        const player = getPlayerById(players, session?.user.id);
         const response = await fetch(`/api/room/buyin`, {
             method: 'PATCH',
             body: JSON.stringify({
                 buyinAmount: Number(buyinAmount),
                 roomId: roomId,
-                userId: player?.userId,
+                userId: session?.user.id,
             })
         });
         if(!response.ok){
@@ -133,7 +127,6 @@ const Lobby: React.FC<RoomProps> = ({
         router.push(`/profile/${email.split('@')[0].split('%40')[0]}`)
   }
   
-  // console.log(buyins);
   return (
     <>
       <div className="mx-5 mt-5 flex flex-col gap-y-2 pb-32">
@@ -206,13 +199,11 @@ const Lobby: React.FC<RoomProps> = ({
                     key={idx} 
                     roomId={roomId}
                     user={user}
-                    balance={user.remainingChips-user.totalBuyin}
+                    totalBuyin={user.totalBuyin}
                     players={players}
                     isModerator={session?.user.id === moderator.id}
-                    handleProfileClick={() => handleProfileClick({
-                      userId: user.userId,
-                      email: user.email,
-                    })}
+                    isThisPlayerModerator={user.userId === moderator.id}
+                    handleProfileClick={handleProfileClick}
                 />
               ))}
             </div>
@@ -222,24 +213,20 @@ const Lobby: React.FC<RoomProps> = ({
 
         {/* Transactions */}
         <div className="mt-5">
-          <div>Transactions <span className="opacity-50">{`(${0})`}</span></div>
+          <div>Transactions <span className="opacity-50">{`(${transactions.length})`}</span></div>
           <hr />
           <div className="mt-3">
             <div className="flex flex-col gap-y-2">
-              <TransactionCard
-                senderName={"danny"}
-                senderImgUrl={userImg}
-                receiverName={"danny"}
-                recieverImgUrl={userImg}
-                amount={1000}
-              />
-              <TransactionCard
-                senderName={"danny"}
-                senderImgUrl={userImg}
-                receiverName={"danny"}
-                recieverImgUrl={userImg}
-                amount={1000}
-              />
+              {transactions.slice().reverse().map((data, idx) => (
+                <TransactionCard
+                  key={idx}
+                  sellerId={data.sellerId}
+                  buyerId={data.buyerId}
+                  amount={data.amount}
+                  timeStamp={data.timeStamp}
+                  handleProfileClick={handleProfileClick}
+                />
+              ))}
             </div>
           </div>
         </div>

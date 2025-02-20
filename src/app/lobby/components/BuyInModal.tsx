@@ -37,7 +37,7 @@ const BuyInModal: FC<ModalProps> = ({ isOpen, buyinAmount, setBuyinAmount, handl
         <input
           type="number"
           placeholder="CHIPS"
-          inputMode="decimal"
+          inputMode="numeric"
           value={buyinAmount}
           onChange={(e) => setBuyinAmount(e.target.value)}
           autoFocus

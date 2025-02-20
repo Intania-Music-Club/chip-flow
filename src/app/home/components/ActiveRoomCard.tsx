@@ -1,12 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import Image from "next/image";
 import FormattedDate from "@/components/FormattedDate";
+import { motion } from "framer-motion";
 
 type RoomCardProps = {
     roomPIN: string;
+    isTitleVisible: boolean;
 }
 
 type Player = {
@@ -20,10 +23,27 @@ type Room = {
     startTime: Date;
 }
 
-const RoomCard = ({roomPIN} : RoomCardProps) => {
+const ActiveRoomCard = ({roomPIN, isTitleVisible} : RoomCardProps) => {
+    const { data:session } = useSession();
     const router = useRouter();
     const [room, setRoom] = useState<Room | null>(null);
     const [activeChips, setActiveChips] = useState<number>(0);
+    const [isCardVisible, setIsCardVisible] = useState(false);
+    const [isRoomFetched, setIsRoomFetched] = useState(false);
+    const [isButtonPressed, setIsButtonPressed] = useState(false);
+
+
+    useEffect(() => {
+        if(isTitleVisible && isRoomFetched) {
+            const timer = setTimeout(() => {
+                setIsCardVisible(true);
+            }, 300)
+            return () => {
+                if(timer) clearTimeout(timer)
+            }
+        }
+    }, [isTitleVisible, isRoomFetched])
+
     useEffect(() => {
         try {
             const fetchRoom = async () => {
@@ -42,6 +62,8 @@ const RoomCard = ({roomPIN} : RoomCardProps) => {
             fetchRoom();
         } catch(error) {
             console.log(error);
+        } finally {
+            setIsRoomFetched(true);
         }
     }, [roomPIN]);
 
@@ -52,8 +74,37 @@ const RoomCard = ({roomPIN} : RoomCardProps) => {
         }
     }, [room?.players]);
 
+    const handleRoomJoining = async () => {
+        if(roomPIN.length === 6) {
+          if(!session) {
+            console.error("User is not authenticated");
+          }
+          try {
+            const response = await fetch(`/api/room/join`, {
+              method: "PATCH",
+              body: JSON.stringify({
+                userId: session?.user.id,
+                PIN: roomPIN,
+              })
+            });
+    
+            if(!response.ok) {
+              alert(`There's no Room PIN: ${roomPIN}`);
+              throw new Error(`Failed to join room with PIN: ${roomPIN}`)
+            }
+            router.push(`/lobby/${roomPIN}`);
+          } catch(error) {
+            console.log(error);
+          }
+        } else {
+          alert("Please provide a 6 digits PIN")
+        }
+      }
+
     return (
-        <div className="bg-black bg-opacity-20 px-5 py-3 rounded-xl flex flex-col gap-2 shadow-lg">
+        <div className={`bg-black bg-opacity-20 px-5 py-4 rounded-xl flex flex-col gap-2 shadow-lg transition-all duration-1000 ${
+            isCardVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+        }`}>
             <div className="flex justify-between items-center gap-x-3">
                 {/* PIN */}
                 <div className="text-2xl font-bold flex items-center gap-5">
@@ -65,12 +116,31 @@ const RoomCard = ({roomPIN} : RoomCardProps) => {
                 </div>
                 
                 {/* Join Button */}
-                <button
-                    onClick={() => {router.push(`/lobby/${roomPIN}`)}}
-                    className="bg-primary-red bg-opacity-50 py-2 px-8 rounded-xl font-bold transition-all duration-75 active:scale-95"
-                >
-                    Join
-                </button>
+                {
+                    <motion.button
+                        onClick={() => {setIsButtonPressed(true); handleRoomJoining();}}
+                        disabled={isButtonPressed}
+                        className="bg-primary-red bg-opacity-50 py-2 px-8 rounded-xl font-bold active:scale-95"
+                        initial={{ y: -10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{
+                            y: {
+                                delay: 1.5,
+                                type: "spring",
+                                stiffness: 400,
+                                damping: 10,
+                              },
+                              opacity: {
+                                delay: 1.5,
+                                duration: 0.5,
+                                ease: "easeOut",
+                              },
+                        }}
+                    >
+                        Join
+                </motion.button>
+                }
+                
             </div>
             <div className="flex relative mb-10">
                 {room?.players.map(({ image }, idx) => (
@@ -105,4 +175,4 @@ const RoomCard = ({roomPIN} : RoomCardProps) => {
     )
 }
 
-export default RoomCard
+export default ActiveRoomCard

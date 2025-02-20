@@ -13,6 +13,7 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   const {data:session} = useSession();
   const [PIN, setPIN] = useState("");
   const router = useRouter();
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
   const handleRoomJoining = async () => {
     if(PIN.length === 6) {
       if(!session) {
@@ -35,6 +36,8 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
       } catch(error) {
         console.log(error);
       }
+    } else {
+      alert("Please provide a 6 digits PIN")
     }
   }
 
@@ -75,16 +78,17 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         <input
           type="text"
           maxLength={6}
-          value={PIN}
-          onChange={(e) => handleInputChange(e)}
           placeholder="PIN"
           inputMode="numeric"
+          value={PIN}
+          onChange={(e) => handleInputChange(e)}
           autoFocus
           className=" placeholder-[#9D9D9D] caret-[#9D9D9D] text-white text-6xl mt-10 font-bold bg-transparent text-center w-full outline-none ring-0"
         ></input>
 
         <button
-          onClick={handleRoomJoining} 
+          onClick={() => {setIsButtonPressed(true); handleRoomJoining();}} 
+          disabled={isButtonPressed}
           className="bg-[#C63C51] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8"
         >
           JOIN

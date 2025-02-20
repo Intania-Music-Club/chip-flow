@@ -3,9 +3,15 @@ import { connectToDB } from "@/utils/database";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
+interface PlayerInRoom {
+    userId: string;
+    totalBuyin: number;
+    remainingChips: number;
+}
+
 export const POST = async (req: Request) => {
     try {
-        const { roomId, seller, buyer, amount} = await req.json();
+        const { roomId, sellerId, buyerId, amount} = await req.json();
         await connectToDB();
 
         const roomObjectId = new mongoose.Types.ObjectId(roomId);
@@ -16,13 +22,19 @@ export const POST = async (req: Request) => {
             });
         }
 
+        const seller = room.players.find((player: PlayerInRoom) => player.userId.toString() === sellerId);
+        const buyer = room.players.find((player: PlayerInRoom) => player.userId.toString() === buyerId);
+
+        seller.totalBuyin -= amount;
+        buyer.totalBuyin += amount;
+
         const newTransaction = {
-            seller,
-            buyer,
-            amount,
+            sellerId: sellerId,
+            buyerId: buyerId,
+            amount: amount,
         };
 
-        room.transaction.push(newTransaction);
+        room.transactions.push(newTransaction);
         await room.save();
 
         return new NextResponse("Transaction completed", {

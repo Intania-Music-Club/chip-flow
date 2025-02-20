@@ -36,7 +36,6 @@ const roomSchema = new Schema({
             },
             totalBuyin: {
                 type: Number,
-                min: [0, 'Buy-in cannot be negative'],
                 default: 0,
             },
             remainingChips: {

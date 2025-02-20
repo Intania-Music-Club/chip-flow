@@ -24,7 +24,7 @@ const Dropdown: React.FC<Dropdown> = ({
     const [amount, SetAmount] = useState<number | ''>('');
     const selectRef = useRef<HTMLSelectElement>(null);
     const handleTransferPlayerChange = () => {
-        setPlayerToTransfer(selectRef.current?.value);
+        setPlayerIdToTransfer(selectRef.current?.value);
     }
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,33 +32,33 @@ const Dropdown: React.FC<Dropdown> = ({
         if (value === '' || /^\d+$/.test(value)) {
             if (value !== '') {
                 const numberValue = Number(value);
-                SetAmount(numberValue > user.totalBuyin ? user.totalBuyin : numberValue);
+                SetAmount(numberValue);
             } else {
                 SetAmount('');
             }
         }
     }
+    //console.log(players);
 
-    const [playerToTransfer, setPlayerToTransfer] = useState<string | undefined>(undefined)
-    
-      const handleTransfer = async () => {
-        if(amount === 0 || playerToTransfer === "--") return;
+    const [playerIdToTransfer, setPlayerIdToTransfer] = useState<string | undefined>(undefined);
+    const handleTransfer = async () => {
+        if(amount === 0 || playerIdToTransfer === "--") return;
         try {
-          const response = await fetch("/api/room/new-transaction", {
+            const response = await fetch("/api/room/new-transaction", {
             method: 'POST',
             body: JSON.stringify({
-              roomId: roomId,
-              seller: user.userId,
-              buyer: playerToTransfer,
-              amount: amount,
+                roomId: roomId,
+                sellerId: user.userId,
+                buyerId: playerIdToTransfer,
+                amount: amount,
             })
-          });
-    
-          if(!response.ok) {
+            });
+
+            if(!response.ok) {
             throw new Error("Failed to POST new-transaction");
-          }
+            }
         } catch(error) {
-          console.log(error);
+            console.log(error);
         }
     }
     
@@ -85,7 +85,7 @@ const Dropdown: React.FC<Dropdown> = ({
                 inputMode="numeric"
                 value={amount}
                 onChange={handleAmountChange}
-                className="w-16 bg-transparent placeholder-gray-500 text-center border rounded-md"
+                className="w-16 bg-transparent text-center border rounded-md"
             />
 
             <div className="ml-2" onClick={handleTransfer}>

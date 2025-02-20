@@ -31,7 +31,7 @@ const BuyinCard: React.FC<Buyin> = ({
                     throw new Error("Failed to fetch user for BuyinCard");
                 }
                 const data = await response.json();
-                 console.log(data);
+                // console.log(data);
                 setUser({
                     email: data.user.email,
                     name: data.user.username,
@@ -53,10 +53,10 @@ const BuyinCard: React.FC<Buyin> = ({
         <div className="space-y-2 px-3 py-3 bg-black bg-opacity-20 rounded-xl shadow-lg">
             <div className="flex justify-between">
                 <div 
-                    className="flex gap-2"
+                    className="flex gap-4"
                     onClick={() => {handleProfileClick({userId: userId, email: user!.email})}}
                 >
-                    <Image src={user?.image ?? "/"} alt="userImg" width={30} height={30} className="rounded-full" />
+                    <Image src={user!.image} alt="userImg" width={30} height={30} className="rounded-full" />
                     {user?.name}
                 </div>
                 <div className="flex justify-end mr-2">+{amount}</div>
