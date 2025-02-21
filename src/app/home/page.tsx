@@ -155,7 +155,9 @@ const HomePage = () => {
         
         {session?.user.roomPINJoining && (
             <div className="mt-12">
-                <div className={`text-2xl font-bold transition-all duration-1000 ${isActiveRoomVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"}`}>Active Room</div>
+                <div className={`mb-2 text-2xl font-bold transition-all duration-1000 ${isActiveRoomVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"}`}>
+                    Let's Chippy!
+                </div>
                 <hr className={`transition-all duration-1000 ${isActiveRoomVisible ? "opacity-50" : "opacity-0"}`} />
                 <div className="mt-5">
                     <ActiveRoomCard 
