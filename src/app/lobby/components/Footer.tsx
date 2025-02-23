@@ -32,7 +32,7 @@ const Footer: React.FC<Footer> = ({
           <div className="flex justify-end items-center">
             <button
               onClick={openBuyInModal}
-              className="bg-black text-white py-2 px-4 rounded-md text-lg font-bold"
+              className="bg-primary-red bg-opacity-80 text-white py-2 px-4 rounded-md text-lg font-bold"
             >
               Buy In
             </button>

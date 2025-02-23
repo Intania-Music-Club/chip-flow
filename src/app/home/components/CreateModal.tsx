@@ -14,6 +14,7 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const [multiplierFactor, setMultiplierFactor] = useState<string>("");
   const [isValidMultiplerFactor, setIsValidMultiplierFactor] = useState(true);
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setIsValidMultiplierFactor(true);
@@ -30,7 +31,7 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const handleCreateRoom = async () => {
     if(!multiplierFactor || multiplierFactor === "") {
-      alert("Please enter a multipler factor");
+      alert("Please enter a multiplier factor");
     }
 
     try {
@@ -57,7 +58,7 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
+      className={`z-10 fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
         isOpen
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"
@@ -105,7 +106,8 @@ const CreateModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         )}
 
         <button
-          onClick={handleCreateRoom}
+          onClick={() => {setIsButtonPressed(true); handleCreateRoom();}}
+          disabled={isButtonPressed}
           className="bg-[#D95F59] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8"
         >
           CREATE

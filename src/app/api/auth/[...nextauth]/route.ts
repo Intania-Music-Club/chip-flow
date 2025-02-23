@@ -1,25 +1,16 @@
-import NextAuth, { NextAuthOptions, Session, User as NextAuthUser } from "next-auth";
+import NextAuth, { NextAuthOptions, Session, User as NextAuthUser, RoomReference } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { connectToDB } from "@/utils/database";
 import User from "@/models/user";
-import { Types } from "mongoose";
-
-// Define the custom types for the session
-interface RoomJoined {
-  roomId: Types.ObjectId;
-}
 
 interface CustomUser extends NextAuthUser {
   id: string;
   name: string;
+  email: string;
   image?: string;
   bankroll: number;
-  roomJoining: {
-    roomId: Types.ObjectId;
-    roomPIN: string;
-    isModerator: boolean;
-  } | null;
-  roomJoined: RoomJoined[];
+  roomPINJoining: string | null;
+  roomJoined: RoomReference[];
 }
 
 export interface CustomSession extends Session {
@@ -35,7 +26,7 @@ export const authOptions = {
   ],
 
   callbacks: {
-    async session({ session, user }: { session: CustomSession, user: CustomUser}) {
+    async session({ session }: { session: CustomSession}) {
       await connectToDB();
       const userDB = await User.findOne({email: session.user.email})
       if(!userDB) return session;
@@ -45,7 +36,7 @@ export const authOptions = {
       session.user.name = userDB.username;
       session.user.image = userDB.image;
       session.user.bankroll = userDB.bankroll;
-      session.user.roomJoining = userDB.roomJoining;
+      session.user.roomPINJoining = userDB.roomPINJoining;
       session.user.roomJoined = userDB.roomJoined;
 
       // console.log("real session : ", session);
@@ -66,9 +57,6 @@ export const authOptions = {
             email: profile.email,
             username: profile.name,
             image: profile.picture,
-            bankroll: 0,
-            roomJoining: null,
-            roomJoined: [],
           });
         }
         return true;

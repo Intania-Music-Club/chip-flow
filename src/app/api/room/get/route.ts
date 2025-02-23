@@ -3,10 +3,6 @@ import User from "@/models/user";
 import { connectToDB } from "@/utils/database";
 import { NextRequest, NextResponse } from "next/server";
 
-interface Params {
-    PIN: string;
-}
-
 interface Player {
     userId: string,
     image: string,
@@ -70,12 +66,16 @@ export const GET = async (req: NextRequest) => {
         return new NextResponse(JSON.stringify({
             roomId: room._id,
             roomPIN: room.PIN,
+            startTime: room.startTime,
+            endTime: room.endTime,
             multiplierFactor: room.multiplierFactor,
             moderatorId: room.moderatorId.toString(),
             moderatorName: moderator.username,
             moderatorImg: moderator.image,
             moderatorEmail: moderator.email,
             players: formattedUsers,
+            buyins: room.buyins,
+            transactions: room.transactions,
         }), {
             status: 200,
         })

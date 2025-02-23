@@ -26,7 +26,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     }
     const handleChangingName = async () => {
             try {
-                const response = await fetch("/api/update-name", {
+                const response = await fetch("/api/users/update-name", {
                     method: 'POST',
                     body: JSON.stringify({
                         userId: userId,

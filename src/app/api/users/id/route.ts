@@ -9,8 +9,8 @@ export const GET = async (req: Request) => {
         await connectToDB();
 
         const { searchParams } = new URL(req.url);
-        const moderatorId = searchParams.get("id");
-        const user = await User.findById(moderatorId);
+        const userId = searchParams.get("id");
+        const user = await User.findById(userId);
         if(!user) {
             return new NextResponse("User not found", {
                 status: 404
@@ -24,7 +24,7 @@ export const GET = async (req: Request) => {
         
     } catch (error) {
         console.log(error);
-        return new NextResponse("Fetching User by email failed", {
+        return new NextResponse("Fetching User by id failed", {
             status: 500
         })
     }

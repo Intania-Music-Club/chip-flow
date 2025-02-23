@@ -33,7 +33,11 @@ export const PATCH = async (req:NextRequest) => {
         }
 
         room.players[playerIndex].totalBuyin += buyinAmount;
-        room.players[playerIndex].remainingChips += buyinAmount;
+
+        room.buyins.push({
+            userId: userId,
+            amount: buyinAmount,
+        });
 
         await room.save();
         

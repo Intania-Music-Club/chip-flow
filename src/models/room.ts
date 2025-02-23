@@ -36,13 +36,31 @@ const roomSchema = new Schema({
             },
             totalBuyin: {
                 type: Number,
-                min: [0, 'Buy-in cannot be negative'],
                 default: 0,
             },
             remainingChips: {
                 type: Number,
                 min: [0, 'Remaining chips cannot be negative'],
                 default: 0,
+            }
+        }],
+        default: [],
+    },
+
+    buyins: {
+        type: [{
+            userId: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                required: true,
+            },
+            amount: {
+                type: Number,
+                required: true,
+            },
+            timeStamp: {
+                type: Date,
+                default: Date.now,
             }
         }],
         default: [],

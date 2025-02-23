@@ -1,4 +1,5 @@
 import Room from "@/models/room";
+import User from "@/models/user";
 import { connectToDB } from "@/utils/database";
 import { NextResponse } from "next/server";
 
@@ -27,15 +28,21 @@ export const POST = async (req: Request) => {
             throw new Error("Failed to generate a unique PIN after multiple attemps.")
         };
 
-        const roomPIN = await generateRoomPIN();
+        const roomPIN = String(await generateRoomPIN());
         const newRoom = new Room({ 
             PIN: roomPIN,
             multiplierFactor: multiplierFactor,
             moderatorId: userId,
             players: [{userId}],
         });
-
         await newRoom.save();
+
+        const user = await User.findById(userId);
+        if(!user) {
+            return new NextResponse("User not found!", { status: 404});
+        }
+        user.roomPINJoining = roomPIN;
+        await user.save();
 
         return new NextResponse(JSON.stringify({
             PIN: newRoom.PIN,

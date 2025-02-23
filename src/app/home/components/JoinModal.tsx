@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import CloseIcon from "../../../../public/images/close-icon.svg";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -13,6 +13,7 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
   const {data:session} = useSession();
   const [PIN, setPIN] = useState("");
   const router = useRouter();
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
   const handleRoomJoining = async () => {
     if(PIN.length === 6) {
       if(!session) {
@@ -27,20 +28,29 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
           })
         });
 
-        if(response.ok) {
-          router.push(`/lobby/${PIN}`);
+        if(!response.ok) {
+          alert(`There's no Room PIN: ${PIN}`);
+          throw new Error(`Failed to join room with PIN: ${PIN}`)
         }
-        else {
-          throw new Error("Failed to join the room");
-        }
+        router.push(`/lobby/${PIN}`);
       } catch(error) {
         console.log(error);
       }
+    } else {
+      alert("Please provide a 6 digits PIN")
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (/^\d*$/.test(value)) {
+      setPIN(value === '' ? '' : value);
     }
   }
   return (
     <div
-      className={`fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
+      className={`z-10 fixed inset-0 bg-gradient-to-t from-black to-transparent transition-opacity duration-300 ${
         isOpen
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"
@@ -68,16 +78,17 @@ const JoinModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         <input
           type="text"
           maxLength={6}
-          value={PIN}
-          onChange={(e) => setPIN(e.target.value)}
           placeholder="PIN"
           inputMode="numeric"
+          value={PIN}
+          onChange={(e) => handleInputChange(e)}
           autoFocus
           className=" placeholder-[#9D9D9D] caret-[#9D9D9D] text-white text-6xl mt-10 font-bold bg-transparent text-center w-full outline-none ring-0"
         ></input>
 
         <button
-          onClick={handleRoomJoining} 
+          onClick={() => {setIsButtonPressed(true); handleRoomJoining();}} 
+          disabled={isButtonPressed}
           className="bg-[#C63C51] text-white text-3xl font-bold w-full h-14 rounded-lg mt-8"
         >
           JOIN

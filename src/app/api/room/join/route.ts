@@ -20,6 +20,14 @@ export const PATCH = async (req: NextRequest) => {
                 status: 404,
             });
         }
+
+        const user = await User.findById(userId);
+        if(!user) {
+            return new NextResponse("User not found", { status: 404,})
+        }
+        user.roomPINJoining = PIN;
+        await user.save();
+        
         const userExists = room.players?.some((player: any) => String(player.userId) === String(userId));
         //console.log(userExists);
         if(userExists) {
@@ -30,16 +38,7 @@ export const PATCH = async (req: NextRequest) => {
 
         room.players.push({userId: userId});
         await room.save();
-
-        const user = await User.findById(userId);
-        user.roomJoining = {
-            roomId: room.roomId,
-            roomPIN: PIN,
-            isModerator: (String(userId) === String(room.moderatorId))
-        }
-
-        console.log(user.roomJoining);
-
+        
         return new NextResponse("User added to room successfully", {
             status: 201,
         })

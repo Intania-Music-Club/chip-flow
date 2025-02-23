@@ -21,30 +21,15 @@ const userSchema = new Schema({
         default: 0,
     },
 
-    roomJoining: {
-        type: {
-            roomId: {
-                type: Schema.Types.ObjectId,
-                ref: 'Room',
-                required: true,
-            },
-            roomPIN: {
-                type: String,
-                required: true,
-            },
-            isModerator: {
-                type: Boolean,
-                default: false,
-            },
-        },
+    roomPINJoining: {
+        type: String,
         default: null,
     },
 
     roomJoined: {
         type: [{
-            roomId: {
-                type: Schema.Types.ObjectId,
-                ref: 'Room',
+            PIN: {
+                type: String,
                 required: true,
             },
         }],

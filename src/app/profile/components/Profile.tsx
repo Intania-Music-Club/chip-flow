@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
 import { RoomReference } from "next-auth";
 import BackButton from "../../../components/BackButton";
 import ProfileCard from "./ProfileCard";

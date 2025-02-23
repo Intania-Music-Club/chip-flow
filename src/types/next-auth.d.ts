@@ -1,14 +1,8 @@
-import NextAuth, { DefaultSession, DefaultUser, DefaultJWT } from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 import { Types } from "mongoose"; 
 
 interface RoomReference {
-  roomId: Types.ObjectId;
-}
-
-interface RoomJoining {
-  roomId: Types.ObjectId;
-  roomPIN: string;
-  isModerator: boolean;
+  PIN: string;
 }
 
 declare module "next-auth" {
@@ -19,7 +13,7 @@ declare module "next-auth" {
       name: string;
       image?: string;
       bankroll: number;
-      roomJoining: RoomJoining | null;
+      roomPINJoining: string | null
       roomJoined: RoomReference[];
     } & DefaultSession["user"];
   }
@@ -30,12 +24,12 @@ declare module "next-auth" {
     name: string;
     image?: string;
     bankroll: number;
-    roomJoining: RoomJoining | null;
+    roomPINJoining: string | null;
     roomJoined: RoomReference[];
   }
 
   interface RoomReference {
-    roomId: Types.ObjectId | string; // roomId is now correctly typed as ObjectId or string
+    PIN: string;
   }
 }
 

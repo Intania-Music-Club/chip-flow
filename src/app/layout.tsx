@@ -1,9 +1,10 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import Provider from "@/components/Provider";
 import type { Metadata } from "next";
-import { getServerSession, Session } from "next-auth";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
+import Provider from "@/components/Provider";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession, Session } from "next-auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <Provider session={session} key={session?.user.id}>
-        <body className={`bg-radial-gradient min-h-screen ${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body className={`min-h-screen bg-radial-gradient bg-fixed ${geistSans.variable} ${geistMono.variable} antialiased`}>
           {children}
         </body>
       </Provider>
