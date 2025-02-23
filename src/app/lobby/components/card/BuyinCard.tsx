@@ -53,13 +53,13 @@ const BuyinCard: React.FC<Buyin> = ({
         <div className="space-y-2 px-3 py-3 bg-black bg-opacity-20 rounded-xl shadow-lg">
             <div className="flex justify-between">
                 <div 
-                    className="flex gap-4"
+                    className="flex items-center gap-4"
                     onClick={() => {handleProfileClick({userId: userId, email: user!.email})}}
                 >
                     <Image src={user!.image} alt="userImg" width={30} height={30} className="rounded-full" />
                     {user?.name}
                 </div>
-                <div className="flex justify-end mr-2">+{amount}</div>
+                <div className="flex justify-end mx-2">+{amount}</div>
             </div>
             <div className="text-sm opacity-50">
                 <FormattedDate timeStamp={timeStamp}/>

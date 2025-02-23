@@ -142,7 +142,10 @@ const Lobby: React.FC<RoomProps> = ({
             <div className="mt-1 text-4xl">{formatPIN(roomPIN)}</div>
           </div>
           {session?.user.id === moderator.id && (<div className="flex justify-center items-center">
-            <div className="text-center w-28 bg-[#C63C51] mt-3 px-2 py-2 font-bold text-sm rounded-lg">
+            <div 
+              onClick={() => router.push(`/lobby/${roomPIN}/end-table`)}
+              className="text-center w-28 bg-[#C63C51] mt-3 px-2 py-2 font-bold text-sm rounded-lg"
+            >
                 END GAME
             </div>
           </div>)}

@@ -88,7 +88,7 @@ const HomePage = () => {
     const closeCreateModal = () => setIsCreateModalOpen(false);
 
     return (
-        <div className="pt-20 mx-5 h-screen overflow-x-hidden overflow-y-hidden">
+        <div className="pt-20 mx-5 h-screen overflow-hidden">
         <div className="grid grid-cols-[2fr_1fr] mx-2">
             {/* Header */}
             <div className="flex flex-col justify-start">

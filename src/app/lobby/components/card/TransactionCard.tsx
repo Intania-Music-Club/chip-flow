@@ -38,8 +38,6 @@ const TransactionCard: React.FC<PlayerStatProps> = ({
           fetch(`/api/users/id?id=${buyerId}`).then(res => res.json()),
         ]);
 
-        console.log(sellerDB, buyerDB)
-
         setSeller({
           email: sellerDB.user.email,
           name: sellerDB.user.username,
@@ -80,7 +78,7 @@ const TransactionCard: React.FC<PlayerStatProps> = ({
           />
           <div>{seller?.name}</div>
         </div>
-        <div className="flex justify-center opacity-50">
+        <div className="flex justify-center items-center opacity-50">
           <ChevronsRight />
         </div>
         <div 
